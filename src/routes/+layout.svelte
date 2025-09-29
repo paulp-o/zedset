@@ -8,6 +8,7 @@
 	import AnimatedLogo from '$lib/components/AnimatedLogo.svelte';
 	import { settingsStore } from '$lib/stores/settings.svelte.js';
 	import { themeStore } from '$lib/stores/theme.svelte.js';
+	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 
 	let { children } = $props();
 
