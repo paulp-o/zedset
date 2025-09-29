@@ -72,7 +72,7 @@
 			document.documentElement.classList.remove('dark');
 		}
 	</script>
-	<title>Zed Settings Editor</title>
+	<title>ZedSet - A GUI editor for Zed editor settings</title>
 	<meta name="description" content="GUI editor for Zed editor settings" />
 </svelte:head>
 
