@@ -284,7 +284,7 @@
 	function highlightedGroupLabel(groupName: string): string {
 		const label = formatGroupName(groupName);
 		const q = (uiStore as any).searchQuery;
-		return q && q.length >= 2 ? highlightText(label, q) : label;
+		return q && q.length >= 3 ? highlightText(label, q) : label;
 	}
 
 	function highlightedFieldLabel(path: string): string {
@@ -292,7 +292,7 @@
 		const fieldName = parts[parts.length - 1];
 		const formatted = fieldName.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 		const q = (uiStore as any).searchQuery;
-		const highlighted = q && q.length >= 2 ? highlightText(formatted, q) : formatted;
+		const highlighted = q && q.length >= 3 ? highlightText(formatted, q) : formatted;
 		const star = customPaths.has(path) ? '<span class="text-orange-500 ml-1">*</span>' : '';
 		return highlighted + star;
 	}

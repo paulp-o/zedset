@@ -164,7 +164,7 @@ export function filterPathsBySearch(
 	docsMap: Record<string, string> = {}
 ): string[] {
 	const normalizedQuery = query.toLowerCase().trim();
-	if (!normalizedQuery) return paths;
+	if (!normalizedQuery || normalizedQuery.length < 3) return paths;
 
 	return paths.filter((path) => {
 		// Search in path

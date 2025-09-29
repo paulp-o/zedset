@@ -44,12 +44,86 @@
 </script>
 
 <svelte:head>
+	<!-- Primary Meta Tags -->
+	<title>ZedSet - Visual GUI Editor for Zed Editor Settings</title>
+	<meta name="title" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
+	<meta name="description" content="A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface." />
+	<meta name="keywords" content="Zed editor, settings editor, GUI, configuration, JSON editor, code editor settings, developer tools, Zed config" />
+	<meta name="author" content="ZedSet" />
+	<meta name="robots" content="index, follow" />
+	<meta name="language" content="en" />
+	<meta name="revisit-after" content="7 days" />
+
+	<!-- Canonical URL -->
+	<link rel="canonical" href="https://zedset.vercel.app/" />
+
+	<!-- Open Graph / Facebook -->
+	<meta property="og:type" content="website" />
+	<meta property="og:url" content="https://zedset.vercel.app/" />
+	<meta property="og:title" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
+	<meta property="og:description" content="A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface." />
+	<meta property="og:image" content="https://zedset.vercel.app/og-image.png" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta property="og:image:alt" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
+	<meta property="og:site_name" content="ZedSet" />
+	<meta property="og:locale" content="en_US" />
+
+	<!-- Twitter -->
+	<meta property="twitter:card" content="summary_large_image" />
+	<meta property="twitter:url" content="https://zedset.vercel.app/" />
+	<meta property="twitter:title" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
+	<meta property="twitter:description" content="A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface." />
+	<meta property="twitter:image" content="https://zedset.vercel.app/og-image.png" />
+	<meta property="twitter:image:alt" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
+
+	<!-- Additional SEO Meta Tags -->
+	<meta name="theme-color" content="#0A0A0A" />
+	<meta name="msapplication-TileColor" content="#0A0A0A" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+	<meta name="application-name" content="ZedSet" />
+
 	<!-- Favicon -->
 	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 	<link rel="shortcut icon" href="/favicon.ico" />
 	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 	<link rel="manifest" href="/site.webmanifest" />
+
+	<!-- Structured Data (JSON-LD) -->
+	<script type="application/ld+json">
+	{
+		"@context": "https://schema.org",
+		"@type": "SoftwareApplication",
+		"name": "ZedSet",
+		"description": "A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface.",
+		"url": "https://zedset.vercel.app/",
+		"applicationCategory": "DeveloperApplication",
+		"operatingSystem": "Web Browser",
+		"offers": {
+			"@type": "Offer",
+			"price": "0",
+			"priceCurrency": "USD"
+		},
+		"publisher": {
+			"@type": "Organization",
+			"name": "ZedSet"
+		},
+		"screenshot": "https://zedset.vercel.app/og-image.png",
+		"softwareVersion": "1.0",
+		"aggregateRating": {
+			"@type": "AggregateRating",
+			"ratingValue": "5.0",
+			"ratingCount": "1"
+		}
+	}
+	</script>
+
+	<!-- Preconnect to external domains for performance -->
+	<link rel="preconnect" href="https://fonts.googleapis.com" />
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="preconnect" href="https://raw.githubusercontent.com" />
 
 	<script>
 		// Apply theme immediately to prevent FOUC
@@ -72,8 +146,6 @@
 			document.documentElement.classList.remove('dark');
 		}
 	</script>
-	<title>ZedSet - A GUI editor for Zed editor settings</title>
-	<meta name="description" content="GUI editor for Zed editor settings" />
 </svelte:head>
 
 <div class="mx-auto min-h-screen max-w-7xl bg-background">

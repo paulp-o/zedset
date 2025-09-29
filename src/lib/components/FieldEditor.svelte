@@ -51,25 +51,25 @@
 	let highlightedLabel = $derived(() => {
 		const q = uiStore.searchQuery;
 		const base = uiStore.showRawKeys ? path : label();
-		return q && q.length >= 2 ? highlightText(base, q) : base;
+		return q && q.length >= 3 ? highlightText(base, q) : base;
 	});
 
 	let highlightedDescriptionHTML = $derived(() => {
 		if (!description) return '';
 		const q = uiStore.searchQuery;
 		const html = parseSimpleMarkdown(description);
-		return q && q.length >= 2 ? highlightText(html, q) : html;
+		return q && q.length >= 3 ? highlightText(html, q) : html;
 	});
 
 	let highlightedValueHTML = $derived(() => {
 		const q = uiStore.searchQuery;
 		const text = String(stringValue ?? '');
-		return q && q.length >= 2 ? highlightText(text, q) : '';
+		return q && q.length >= 3 ? highlightText(text, q) : '';
 	});
 
 	let hasValueMatch = $derived(() => {
 		const q = uiStore.searchQuery;
-		if (!q || q.length < 2) return false;
+		if (!q || q.length < 3) return false;
 		return String(stringValue ?? '')
 			.toLowerCase()
 			.includes(q.toLowerCase());

@@ -127,8 +127,8 @@ class UiStore {
 	// Search functionality that will be used with settings store
 	searchFields(paths: string[], docsMap: Record<string, string>, query: string): Set<string> {
 		const normalizedQuery = query.toLowerCase().trim();
-		// Require at least 2 characters for search
-		if (!normalizedQuery || normalizedQuery.length < 2) return new Set();
+		// Require at least 3 characters for search
+		if (!normalizedQuery || normalizedQuery.length < 3) return new Set();
 
 		const matchingPaths = new Set<string>();
 

@@ -29,8 +29,8 @@
 			pathsToShow = pathsToShow.filter((path) => changedPaths.has(path));
 		}
 
-		// Apply search filter (only if query is 2+ characters)
-		if (query && query.length >= 2) {
+		// Apply search filter (only if query is 3+ characters)
+		if (query && query.length >= 3) {
 			const matchingPaths = uiStore.searchFields(pathsToShow, {}, query);
 			pathsToShow = pathsToShow.filter((path) => matchingPaths.has(path));
 		}
