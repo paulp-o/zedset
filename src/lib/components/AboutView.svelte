@@ -1,17 +1,19 @@
 <script lang="ts">
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import { ExternalLink } from 'lucide-svelte';
 </script>
 
 <div class="flex-1 overflow-y-auto">
 	<div class="max-w-4xl mx-auto px-6 py-16">
 		<!-- Hero Section -->
-		<div class="text-center space-y-6 mb-20">
+		<div class="text-center space-y-6 mb-12">
 			<div class="space-y-4">
 				<h1 class="text-6xl font-light text-foreground tracking-tight">
 					Zed<span class="font-bold">Set</span>
 				</h1>
 				<p class="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-					A lightweight GUI tool for editing Zed Editor settings with style and simplicity
+					A lightweight GUI tool for working with<br> Zed Editor's settings.
+					Built for simplicity.
 				</p>
 			</div>
 			
@@ -23,13 +25,26 @@
 		</div>
 
 		<!-- Introduction -->
-		<div class="prose prose-lg max-w-none mb-16 text-center">
-			<p class="text-muted-foreground leading-relaxed text-lg mb-6">
-				ZedSet is a lightweight tool for loading, editing, sharing, and exporting Zed Editor settings.
-			</p>
-			<p class="text-muted-foreground leading-relaxed">
-				<a href="https://zed.dev" target="_blank" rel="noopener noreferrer" class="text-primary hover:underline font-medium transition-colors">Zed</a> is an exciting editor: native, pure, and high-performance—without the Electron wrapper used by many others. Still, some folks hesitate to adopt tools that lack a full GUI for configuration. At least five people around me felt that way—and honestly, sometimes I also miss the convenience of searching for a setting and flipping it in a friendly panel. So I built ZedSet.
-			</p>
+		<div class="prose prose-lg max-w-4xl mx-auto mb-16">
+			<div class="text-left space-y-6">
+				<p class="text-muted-foreground leading-relaxed text-lg">
+					ZedSet is a lightweight tool for loading, editing, sharing, and exporting Zed Editor settings.
+				</p>
+
+				<div class="space-y-4 text-muted-foreground leading-relaxed">
+					<p>
+						<a href="https://zed.dev" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 font-medium transition-colors">Zed</a> is an exciting editor: native, pure, and high-performance—without the Electron wrapper used by many others. The goods of using Zed are far greater than I can list here, but I observed some barriers for some developers to move from another editor. One of them is that there's no convenient in-editor UI for tweaking settings.
+					</p>
+
+					<p>
+						Because of this, more than five people around me gave up on using Zed. And honestly, I sometimes miss the ability to simply search for a setting and flip it in a friendly panel.
+					</p>
+
+					<p class="text-muted-foreground/80 font-medium">
+						That's why I built ZedSet. <a href="https://github.com/paulp-o/zedset" target="_blank" rel="noopener noreferrer" class="text-primary hover:text-primary/80 font-medium transition-colors">Repo <ExternalLink class="w-4 h-4 inline-block" />	</a>
+					</p>
+				</div>
+			</div>
 		</div>
 
 		<!-- Features Grid -->

@@ -210,7 +210,7 @@
 				const scrollTop = contentContainer.scrollTop;
 				
 				// Calculate target scroll position with offset for navbar
-				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - 60;
+				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) -46;
 				
 				// Smooth scroll only the content container
 				contentContainer.scrollTo({
@@ -243,7 +243,7 @@
 				const scrollTop = contentContainer.scrollTop;
 				
 				// Calculate target scroll position with offset for navbar
-				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - 60;
+				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) -46;
 				
 				// Smooth scroll only the content container
 				contentContainer.scrollTo({
@@ -477,9 +477,9 @@ function groupBySecondSegment(paths: string[]): Array<{ key: string; label: stri
 	</div>
 	
 	<!-- Footer (Fixed) -->
-	<div class="border-t p-4">
+	<!-- <div class="border-t p-4">
 		<p class="text-xs text-muted-foreground text-center">
 			Created by <span class="font-medium text-foreground">Paul Park</span>
 		</p>
-	</div>
+	</div> -->
 </nav>
