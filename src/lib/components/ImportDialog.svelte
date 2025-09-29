@@ -41,7 +41,7 @@
 
 	// Import methods
 	let importMethod = $state<'file' | 'text'>('file');
-	
+
 	// Debounce timeout for text validation
 	let validationTimeout: ReturnType<typeof setTimeout> | undefined;
 
@@ -60,11 +60,11 @@
 		if (validationTimeout) {
 			clearTimeout(validationTimeout);
 		}
-		
+
 		if (textContent.trim()) {
 			importMethod = 'text';
 			selectedFile = null;
-			
+
 			// Debounce validation to avoid excessive calls while typing
 			validationTimeout = setTimeout(() => {
 				performValidation();
@@ -129,7 +129,7 @@
 			clearTimeout(validationTimeout);
 			validationTimeout = undefined;
 		}
-		
+
 		// Reset state
 		textContent = '';
 		selectedFile = null;
@@ -175,7 +175,7 @@
 						{/if}
 					</Label>
 					<div class="space-y-2">
-						<div class="flex gap-2 items-center">
+						<div class="flex items-center gap-2">
 							<Button variant="outline" onclick={() => fileInput?.click()} class="flex-shrink-0">
 								<Upload class="mr-2 h-4 w-4" />
 								Choose File
@@ -191,8 +191,8 @@
 								</div>
 							{/if}
 						</div>
-						<span class="text-muted-foreground text-xs">
-							The file <u>isn't being uploaded</u>  to anywhere. Everything stays in your browser.
+						<span class="text-xs text-muted-foreground">
+							The file <u>isn't being uploaded</u> to anywhere. Everything stays in your browser.
 						</span>
 					</div>
 					<input

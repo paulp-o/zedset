@@ -17,18 +17,28 @@
 	import { getAllPaths, getValueByPath } from '$lib/stores/store-utils.js';
 	import { encodeConfig, decodeConfig } from '$lib/core/url-sharing.js';
 	import { parseSimpleMarkdown } from '$lib/utils/markdown.js';
+	import { Dialog, DialogFooter } from '$lib/components/ui/dialog';
+	import DialogContent from '$lib/components/ui/dialog/dialog-content.svelte';
+	import DialogHeader from '$lib/components/ui/dialog/dialog-header.svelte';
+	import DialogDescription from '$lib/components/ui/dialog/dialog-description.svelte';
+	import DialogTitle from '$lib/components/ui/dialog/dialog-title.svelte';
 
 	// URL state management
 	let isLoadingFromUrl = $state(false);
 	let hasSharedConfig = $state(false);
 	let urlCopied = $state(false);
 
+	// Dialog state
+	let showResetAllConfirmation = $state(false);
+	let showFieldResetConfirmation = $state(false);
+	let fieldToReset = $state<string>('');
+
 	// Load settings from URL hash on page load
 	function loadFromUrl() {
 		try {
 			const hash = window.location.hash;
 			const configMatch = hash.match(/#config=([^&]+)/);
-			
+
 			if (configMatch) {
 				isLoadingFromUrl = true;
 				hasSharedConfig = true;
@@ -51,7 +61,7 @@
 	// Update URL with current user settings
 	function updateUrl() {
 		if (isLoadingFromUrl) return; // Don't update URL when loading from URL
-		
+
 		try {
 			const userSettings = settingsStore.user;
 			if (Object.keys(userSettings).length === 0) {
@@ -106,19 +116,22 @@
 	// Load defaults on mount
 	onMount(() => {
 		// Load defaults asynchronously
-		settingsStore.loadDefaults().then(() => {
-			// After defaults are loaded, try to load from URL
-			loadFromUrl();
-		}).catch((error) => {
-			console.error('Error loading defaults:', error);
-		});
+		settingsStore
+			.loadDefaults()
+			.then(() => {
+				// After defaults are loaded, try to load from URL
+				loadFromUrl();
+			})
+			.catch((error) => {
+				console.error('Error loading defaults:', error);
+			});
 
 		// Add keyboard event listener for search shortcut
 		document.addEventListener('keydown', handleKeydown);
-		
+
 		// Add popstate listener for browser navigation
 		window.addEventListener('popstate', handlePopstate);
-		
+
 		return () => {
 			document.removeEventListener('keydown', handleKeydown);
 			window.removeEventListener('popstate', handlePopstate);
@@ -222,11 +235,25 @@
 	}
 
 	function handleFieldReset(path: string) {
-		settingsStore.resetUserSetting(path);
+		fieldToReset = path;
+		showFieldResetConfirmation = true;
+	}
+
+	function confirmFieldReset() {
+		if (fieldToReset) {
+			settingsStore.resetUserSetting(fieldToReset);
+			showFieldResetConfirmation = false;
+			fieldToReset = '';
+		}
 	}
 
 	function handleResetAll() {
+		showResetAllConfirmation = true;
+	}
+
+	function confirmResetAll() {
 		settingsStore.resetAllUserSettings();
+		showResetAllConfirmation = false;
 	}
 
 	function getFieldValue(path: string): unknown {
@@ -248,7 +275,7 @@
 		highlightedElement = elementId;
 	}
 
-	// Get current view from query parameters, default to 'editor' 
+	// Get current view from query parameters, default to 'editor'
 	let currentView = $derived(() => {
 		const view = $page.url.searchParams.get('view');
 		return view || 'editor';
@@ -274,7 +301,6 @@
 
 	// Determine if About is active based on query parameter
 	let isAboutActive = $derived(currentView() === 'about');
-
 
 	// Search functionality
 	function handleSearchInput(event: Event) {
@@ -324,25 +350,20 @@
 			onSectionClick={handleSectionClick}
 			onHighlight={handleHighlight}
 			onAboutClick={handleAboutClick}
-			isAboutActive={isAboutActive}
+			{isAboutActive}
 		/>
 	{/if}
 
 	<!-- Main Content -->
 	<div class="flex flex-1 flex-col">
 		<!-- Toolbar -->
-		<div class="bg-background/80 ">
+		<div class="bg-background/80">
 			<!-- Primary Navigation Line -->
 			<div class="flex items-center justify-between gap-4 px-4 pt-4 pb-3">
 				<div class="flex items-center space-x-4">
 					{#if currentView() === 'about'}
 						<!-- Back to Editor Button -->
-						<Button
-							variant="outline"
-							size="sm"
-							onclick={handleSettingsClick}
-							class="text-sm"
-						>
+						<Button variant="outline" size="sm" onclick={handleSettingsClick} class="text-sm">
 							← Back to Editor
 						</Button>
 						<!-- <h2 class="text-xl font-semibold tracking-tight">About ZedSet</h2> -->
@@ -370,8 +391,8 @@
 							placeholder="Search settings... (Ctrl+K)"
 							value={uiStore.searchQuery}
 							oninput={handleSearchInput}
-							class="w-80 pr-9 pl-9 {uiStore.searchQuery && uiStore.searchQuery.length === 1 
-								? 'border-amber-300 focus:border-amber-300 focus:ring-amber-200' 
+							class="w-80 pr-9 pl-9 {uiStore.searchQuery && uiStore.searchQuery.length === 1
+								? 'border-amber-300 focus:border-amber-300 focus:ring-amber-200'
 								: ''}"
 						/>
 						{#if uiStore.searchQuery}
@@ -383,11 +404,13 @@
 								<X class="h-4 w-4" />
 							</button>
 						{/if}
-						
+
 						<!-- Search requirement hint -->
 						{#if uiStore.searchQuery && uiStore.searchQuery.length === 1}
 							<div class="absolute top-full left-0 mt-1 w-full">
-								<div class="rounded-md bg-amber-50 border border-amber-200 px-3 py-2 text-sm dark:bg-amber-950/50 dark:border-amber-800">
+								<div
+									class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm dark:border-amber-800 dark:bg-amber-950/50"
+								>
 									<div class="flex items-center space-x-2">
 										<div class="h-1.5 w-1.5 rounded-full bg-amber-500"></div>
 										<span class="text-amber-700 dark:text-amber-300">
@@ -403,7 +426,7 @@
 
 			<!-- Secondary Controls Line (Editor Only) -->
 			{#if currentView() === 'editor'}
-				<div class="flex items-center justify-between gap-4 px-4 pb-3">
+				<div class="flex items-center justify-between gap-4 px-4 pb-3 border-b border-dashed bg-background/80">
 					<!-- View Controls -->
 					<div class="flex items-center space-x-6">
 						<div class="flex items-center space-x-4">
@@ -416,7 +439,9 @@
 								<Label for="changed-only" class="text-sm text-muted-foreground">
 									Show Modified Only
 									{#if visibleChangedCount() > 0}
-										<span class="ml-1 rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground">
+										<span
+											class="ml-1 rounded-md bg-muted px-2 py-0.5 text-xs font-medium text-foreground"
+										>
 											{visibleChangedCount()}
 										</span>
 									{/if}
@@ -432,7 +457,6 @@
 								<Label for="raw-keys" class="text-sm text-muted-foreground">Show raw keys</Label>
 							</div>
 						</div>
-
 					</div>
 
 					<!-- Action Buttons -->
@@ -468,7 +492,10 @@
 							</p>
 						{:else}
 							<p class="text-sm text-muted-foreground">
-								<span class="font-medium">{visiblePaths().length}</span> result{visiblePaths().length !== 1 ? 's' : ''} for 
+								<span class="font-medium">{visiblePaths().length}</span> result{visiblePaths()
+									.length !== 1
+									? 's'
+									: ''} for
 								<span class="font-medium">"{uiStore.searchQuery}"</span>
 							</p>
 						{/if}
@@ -490,84 +517,138 @@
 		{:else}
 			<div class="flex-1 overflow-y-auto p-6">
 				{#if settingsStore.loading}
-				<div class="flex h-32 items-center justify-center">
-					<Loader2 class="mr-2 h-6 w-6 animate-spin" />
-					<span>Loading settings...</span>
-				</div>
-			{:else if settingsStore.error}
-				<Alert variant="destructive">
-					<AlertCircle class="h-4 w-4" />
-					<AlertDescription>
-						{settingsStore.error}
-					</AlertDescription>
-				</Alert>
-			{:else if visiblePaths().length === 0}
-				<div class="py-12 text-center text-muted-foreground">
-					{#if uiStore.searchQuery}
-						No settings match your search query
-					{:else if uiStore.showChangedOnly}
-						No changed settings to display
-					{:else if uiStore.activeGroup}
-						No settings in this group
-					{:else}
-						No settings available
-					{/if}
-				</div>
-			{:else}
-				<div class="space-y-6">
-					{#each Object.entries(groupedPaths()) as [groupName, paths] (groupName)}
-						{@const isStandaloneProperty = paths.length === 1 && paths[0] === groupName}
-                        <Card
-                            id="group-{groupName}"
-                            class="relative overflow-hidden transition-smooth shadow-soft hover:shadow-medium card-gradient backdrop-blur-sm"
-                        >
-                            <div class="absolute inset-0 pointer-events-none bg-primary/10 transition-opacity duration-700 ease-out {highlightedElement === `group-${groupName}` ? 'opacity-100' : 'opacity-0'}"></div>
-							<CardHeader class="pt-4">
-								<CardTitle class="text-lg capitalize">
-									{groupName.replace(/[_-]/g, ' ')}
-								</CardTitle>
-								{#if getGroupDocumentation(groupName)}
-									<div
-										class="mt-0 border-l-4 border-blue-200 pl-3 text-sm text-muted-foreground markdown-content"
-									>
-										{@html parseSimpleMarkdown(getGroupDocumentation(groupName) || '')}
-									</div>
-								{/if}
-							</CardHeader>
-							<CardContent class="space-y-0 pt-0">
-								{#each paths as path, index (path)}
-                                    <div
-                                        id="field-{path}"
-                                        class="transition-[background-color] duration-700 ease-out {highlightedElement === `field-${path}` ? 'bg-primary/15 rounded-md' : ''}"
-                                    >
-										<FieldEditor
-											{path}
-											value={getFieldValue(path)}
-											defaultValue={getFieldDefault(path)}
-											changed={isFieldChanged(path)}
-											description={getFieldDocumentation(path) || undefined}
-											validation={settingsStore.validation.fieldErrors[path]}
-											onUpdate={(value) => handleFieldUpdate(path, value)}
-											onReset={() => handleFieldReset(path)}
-											hideLabel={isStandaloneProperty}
-										/>
-									</div>
-									{#if index < paths.length - 1}
-										<hr class="border-border/50" />
+					<div class="flex h-32 items-center justify-center">
+						<Loader2 class="mr-2 h-6 w-6 animate-spin" />
+						<span>Loading settings...</span>
+					</div>
+				{:else if settingsStore.error}
+					<Alert variant="destructive">
+						<AlertCircle class="h-4 w-4" />
+						<AlertDescription>
+							{settingsStore.error}
+						</AlertDescription>
+					</Alert>
+				{:else if visiblePaths().length === 0}
+					<div class="py-12 text-center text-muted-foreground">
+						{#if uiStore.searchQuery}
+							No settings match your search query
+						{:else if uiStore.showChangedOnly}
+							No changed settings to display
+						{:else if uiStore.activeGroup}
+							No settings in this group
+						{:else}
+							No settings available
+						{/if}
+					</div>
+				{:else}
+					<div class="space-y-6">
+						{#each Object.entries(groupedPaths()) as [groupName, paths] (groupName)}
+							{@const isStandaloneProperty = paths.length === 1 && paths[0] === groupName}
+							<Card
+								id="group-{groupName}"
+								class="transition-smooth shadow-soft hover:shadow-medium card-gradient relative overflow-hidden backdrop-blur-sm"
+							>
+								<div
+									class="pointer-events-none absolute inset-0 bg-primary/10 transition-opacity duration-700 ease-out {highlightedElement ===
+									`group-${groupName}`
+										? 'opacity-100'
+										: 'opacity-0'}"
+								></div>
+								<CardHeader class="pt-4">
+									<CardTitle class="text-lg capitalize">
+										{groupName.replace(/[_-]/g, ' ')}
+									</CardTitle>
+									{#if getGroupDocumentation(groupName)}
+										<div
+											class="markdown-content mt-0 border-l-4 border-blue-200 pl-3 text-sm text-muted-foreground"
+										>
+											{@html parseSimpleMarkdown(getGroupDocumentation(groupName) || '')}
+										</div>
 									{/if}
-								{/each}
-							</CardContent>
-						</Card>
-					{/each}
-				</div>
-			{/if}
-		</div>
+								</CardHeader>
+								<CardContent class="space-y-0 pt-0">
+									{#each paths as path, index (path)}
+										<div
+											id="field-{path}"
+											class="rounded-xl duration-700 transition-all p-1 ease-out {highlightedElement ===
+											`field-${path}`
+												? ' bg-primary/0 ring-ring/50 ring-3 rounded-2xl'
+												: 'ring-transparent'}"
+										>
+											<FieldEditor
+												{path}
+												value={getFieldValue(path)}
+												defaultValue={getFieldDefault(path)}
+												changed={isFieldChanged(path)}
+												description={getFieldDocumentation(path) || undefined}
+												validation={settingsStore.validation.fieldErrors[path]}
+												onUpdate={(value) => handleFieldUpdate(path, value)}
+												onReset={() => handleFieldReset(path)}
+												hideLabel={isStandaloneProperty}
+											/>
+										</div>
+										{#if index < paths.length - 1}
+											<hr class="border-border/50" />
+										{/if}
+									{/each}
+								</CardContent>
+							</Card>
+						{/each}
+					</div>
+				{/if}
+			</div>
 		{/if}
 	</div>
 </div>
+<div>
+	<!-- Reset Confirmation Dialogs -->
+	<Dialog
+		open={showResetAllConfirmation}
+		onOpenChange={(open) => (showResetAllConfirmation = open)}
+	>
+		<DialogContent>
+			<DialogHeader>
+				<DialogTitle>Reset All Changes</DialogTitle>
+				<DialogDescription>
+					This will reset all your custom settings back to the default Zed configuration. This
+					action cannot be undone.
+				</DialogDescription>
+			</DialogHeader>
+			<DialogFooter>
+				<Button variant="outline" onclick={() => (showResetAllConfirmation = false)}>Cancel</Button>
+				<Button variant="destructive" onclick={confirmResetAll}>Reset All</Button>
+			</DialogFooter>
+		</DialogContent>
+	</Dialog>
+
+	<Dialog
+		open={showFieldResetConfirmation}
+		onOpenChange={(open) => (showFieldResetConfirmation = open)}
+	>
+		<DialogContent>
+			<DialogHeader>
+				<DialogTitle>Reset Field</DialogTitle>
+				<DialogDescription>
+					This will reset this field back to its default value. This action cannot be undone.
+				</DialogDescription>
+			</DialogHeader>
+			<DialogFooter>
+				<Button
+					variant="outline"
+					onclick={() => {
+						showFieldResetConfirmation = false;
+						fieldToReset = '';
+					}}
+				>
+					Cancel
+				</Button>
+				<Button variant="destructive" onclick={confirmFieldReset}>Reset Field</Button>
+			</DialogFooter>
+		</DialogContent>
+	</Dialog>
+</div>
 
 <style>
-
 	/* Markdown styles for group documentation */
 	:global(.markdown-content .inline-code) {
 		background-color: hsl(var(--muted));
@@ -575,7 +656,9 @@
 		padding: 0.125rem 0.375rem;
 		border-radius: 0.375rem;
 		border: 1px solid hsl(var(--border));
-		font-family: ui-monospace, SFMono-Regular, "SF Mono", Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+		font-family:
+			ui-monospace, SFMono-Regular, 'SF Mono', Monaco, Consolas, 'Liberation Mono', 'Courier New',
+			monospace;
 		font-size: 0.875em;
 		font-weight: 600;
 		letter-spacing: -0.01em;

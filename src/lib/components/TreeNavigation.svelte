@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { slide } from 'svelte/transition';
-    import { ChevronDown, ChevronRight, ChevronUp } from 'lucide-svelte';
+	import { ChevronDown, ChevronRight, ChevronUp } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { uiStore } from '$lib/stores/ui.svelte.js';
 	import { highlightText } from '$lib/utils/highlight.js';
@@ -15,7 +15,14 @@
 		isAboutActive?: boolean;
 	}
 
-	let { groups, activeSection = '', onSectionClick, onHighlight, onAboutClick, isAboutActive = false }: Props = $props();
+	let {
+		groups,
+		activeSection = '',
+		onSectionClick,
+		onHighlight,
+		onAboutClick,
+		isAboutActive = false
+	}: Props = $props();
 
 	// Track which group is expanded (accordion behavior - only one at a time)
 	let expandedGroup = $state<string | null>(null);
@@ -28,21 +35,21 @@
 	// Track highlight timeout for cleanup
 	let highlightTimeout: ReturnType<typeof setTimeout> | undefined;
 
-    // Sidebar scroll handling for "Go to top" button
-    let sidebarEl: HTMLDivElement | null = null;
-    let showGoTop = $state(false);
+	// Sidebar scroll handling for "Go to top" button
+	let sidebarEl: HTMLDivElement | null = null;
+	let showGoTop = $state(false);
 
-    function updateGoTopVisibility() {
-        if (sidebarEl) {
-            showGoTop = sidebarEl.scrollTop > 16;
-        }
-    }
+	function updateGoTopVisibility() {
+		if (sidebarEl) {
+			showGoTop = sidebarEl.scrollTop > 16;
+		}
+	}
 
-    function scrollSidebarToTop() {
-        if (sidebarEl) {
-            sidebarEl.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-    }
+	function scrollSidebarToTop() {
+		if (sidebarEl) {
+			sidebarEl.scrollTo({ top: 0, behavior: 'smooth' });
+		}
+	}
 
 	onMount(() => {
 		// Expand the first group by default
@@ -109,7 +116,7 @@
 			}
 			if (activeField !== currentActiveField) {
 				currentActiveField = activeField;
-				
+
 				// Auto-expand group if a field becomes active
 				if (activeField) {
 					const fieldGroup = Object.keys(groups).find((groupName) =>
@@ -128,7 +135,7 @@
 			if (mainContent) {
 				scrollContainer = mainContent.querySelector('.flex-1.overflow-y-auto');
 			}
-			
+
 			if (scrollContainer) {
 				// Initial call to set active section
 				handleScroll();
@@ -202,22 +209,22 @@
 			// Find the main content container more specifically
 			const mainContent = document.querySelector('div.flex.flex-1.flex-col');
 			const contentContainer = mainContent?.querySelector('.flex-1.overflow-y-auto') as HTMLElement;
-			
+
 			if (element && contentContainer) {
 				// Get element position relative to the scroll container
 				const containerRect = contentContainer.getBoundingClientRect();
 				const elementRect = element.getBoundingClientRect();
 				const scrollTop = contentContainer.scrollTop;
-				
+
 				// Calculate target scroll position with offset for navbar
-				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) -46;
-				
+				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - 60;
+
 				// Smooth scroll only the content container
 				contentContainer.scrollTo({
 					top: targetScrollTop,
 					behavior: 'smooth'
 				});
-				
+
 				// Add highlight after scroll
 				setTimeout(() => {
 					addHighlight(`group-${groupName}`);
@@ -235,22 +242,22 @@
 			// Find the main content container more specifically
 			const mainContent = document.querySelector('div.flex.flex-1.flex-col');
 			const contentContainer = mainContent?.querySelector('.flex-1.overflow-y-auto') as HTMLElement;
-			
+
 			if (element && contentContainer) {
 				// Get element position relative to the scroll container
 				const containerRect = contentContainer.getBoundingClientRect();
 				const elementRect = element.getBoundingClientRect();
 				const scrollTop = contentContainer.scrollTop;
-				
+
 				// Calculate target scroll position with offset for navbar
-				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) -46;
-				
+				const targetScrollTop = scrollTop + (elementRect.top - containerRect.top) - 60;
+
 				// Smooth scroll only the content container
 				contentContainer.scrollTo({
 					top: targetScrollTop,
 					behavior: 'smooth'
 				});
-				
+
 				// Add highlight after scroll
 				setTimeout(() => {
 					addHighlight(`field-${path}`);
@@ -290,42 +297,50 @@
 		return allPaths.filter((p) => p.startsWith(path + '.') && p.split('.').length > 2).length;
 	}
 
-// Group a group's paths by their second-level segment
-function groupBySecondSegment(paths: string[]): Array<{ key: string; label: string; children: string[] }> {
-    const map = new Map<string, string[]>();
-    for (const p of paths) {
-        const parts = p.split('.');
-        const key = parts.length > 1 ? parts[1] : '(root)';
-        if (!map.has(key)) map.set(key, []);
-        map.get(key)!.push(p);
-    }
-    return Array.from(map.entries()).map(([key, children]) => ({
-        key,
-        label: key === '(root)'
-            ? 'Root'
-            : key.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
-        children
-    }));
-}
+	// Group a group's paths by their second-level segment
+	function groupBySecondSegment(
+		paths: string[]
+	): Array<{ key: string; label: string; children: string[] }> {
+		const map = new Map<string, string[]>();
+		for (const p of paths) {
+			const parts = p.split('.');
+			const key = parts.length > 1 ? parts[1] : '(root)';
+			if (!map.has(key)) map.set(key, []);
+			map.get(key)!.push(p);
+		}
+		return Array.from(map.entries()).map(([key, children]) => ({
+			key,
+			label:
+				key === '(root)'
+					? 'Root'
+					: key.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase()),
+			children
+		}));
+	}
 </script>
 
-    <nav class="relative h-full w-72 border-r bg-background/60 backdrop-blur-md shadow-soft flex flex-col">
-        <!-- Go to Top floating button -->
-        <Button
-            variant="secondary"
-            size="sm"
-            onclick={scrollSidebarToTop}
-            class="absolute top-2 right-2 z-10 shadow-medium transition-opacity duration-300 {showGoTop ? 'opacity-100' : 'opacity-0 pointer-events-none'}"
-        >
-            <ChevronUp class="h-4 w-4" />
-        </Button>
+<nav
+	class="shadow-soft relative flex h-full w-72 flex-col border-r bg-background/60 backdrop-blur-md"
+>
+	<!-- Go to Top floating button -->
+	<Button
+		variant="secondary"
+		size="sm"
+		onclick={scrollSidebarToTop}
+		class="shadow-medium absolute top-2 right-2 z-10 transition-opacity duration-300 bg-background/60 backdrop-blur-md border-2 border-border/30 {showGoTop
+			? 'opacity-100 text-primary'
+			: 'pointer-events-none opacity-0 text-primary'}"
+	>
+		<span class="mr-1 text-xs text-primary">Scroll To Top</span>
+		<ChevronUp class="h-4 w-4 text-primary" />
+	</Button>
 	<!-- Content (Scrollable) -->
-    <div class="flex-1 overflow-y-auto" bind:this={sidebarEl} onscroll={updateGoTopVisibility}>
-		<div class="p-4 space-y-4">
+	<div class="flex-1 overflow-y-auto" bind:this={sidebarEl} onscroll={updateGoTopVisibility}>
+		<div class="space-y-4 p-4">
 			<!-- About Section -->
 			<div>
 				<Button
-					variant={isAboutActive ? "secondary" : "ghost"}
+					variant={isAboutActive ? 'secondary' : 'ghost'}
 					onclick={(event) => {
 						event.preventDefault();
 						event.stopPropagation();
@@ -347,138 +362,152 @@ function groupBySecondSegment(paths: string[]): Array<{ key: string; label: stri
 				</h2>
 
 				<div class="space-y-1">
-			{#each Object.entries(groups) as [groupName, paths]}
-				{@const isExpanded = expandedGroup === groupName}
-				{@const isActive = currentActiveSection === groupName}
-				{@const isStandaloneProperty = paths.length === 1 && paths[0] === groupName}
-				{@const allPaths = Object.values(groups).flat()}
+					{#each Object.entries(groups) as [groupName, paths]}
+						{@const isExpanded = expandedGroup === groupName}
+						{@const isActive = currentActiveSection === groupName}
+						{@const isStandaloneProperty = paths.length === 1 && paths[0] === groupName}
+						{@const allPaths = Object.values(groups).flat()}
 
-				<div class="space-y-1">
-					{#if isStandaloneProperty}
-						<!-- Standalone Property (no grouping needed) -->
-						{@const isActiveStandaloneField = currentActiveField === groupName}
-						<Button
-							variant="ghost"
-							size="sm"
-							onclick={(event) => {
-								event.preventDefault();
-								event.stopPropagation();
-								// Switch to editor view and scroll to field
-								onSectionClick?.(groupName);
-								scrollToField(groupName);
-							}}
-							class="h-8 w-full justify-start px-2 {isActiveStandaloneField
-								? 'bg-primary/10 font-semibold text-primary border-l-2 border-primary'
-								: isActive
-								? 'bg-primary/10 font-medium text-primary border-l-2 border-primary'
-								: ''}"
-						>
-							<span class="truncate">{formatFieldName(groupName)}</span>
-						</Button>
-					{:else}
-						<!-- Real Group with Children -->
-						<div class="flex items-center">
-							<Button
-								variant="ghost"
-								size="sm"
-								onclick={(event) => {
-									event.preventDefault();
-									event.stopPropagation();
-									const wasExpanded = expandedGroup === groupName;
-									toggleGroup(groupName);
-									// Switch to editor view and scroll if expanding
-									if (!wasExpanded) {
+						<div class="space-y-1">
+							{#if isStandaloneProperty}
+								<!-- Standalone Property (no grouping needed) -->
+								{@const isActiveStandaloneField = currentActiveField === groupName}
+								<Button
+									variant="ghost"
+									size="sm"
+									onclick={(event) => {
+										event.preventDefault();
+										event.stopPropagation();
+										// Switch to editor view and scroll to field
 										onSectionClick?.(groupName);
-										scrollToGroup(groupName, false); // Don't let scrollToGroup override the toggle
-									}
-								}}
-								class="h-8 w-full justify-start px-2 {isActive
-									? 'bg-primary/10 font-medium text-primary border-l-2 border-primary'
-									: ''}"
-							>
-								<ChevronRight
-									class="mr-2 h-3 w-3 transition-transform duration-200 {isExpanded
-										? 'rotate-90'
-										: ''}"
-								/>
-								<span class="truncate">{@html highlightedGroupLabel(groupName)}</span>
-								<span class="ml-auto text-xs text-muted-foreground">
-									{paths.length}
-								</span>
-							</Button>
-						</div>
+										scrollToField(groupName);
+									}}
+									class="h-8 w-full justify-start px-2 {isActiveStandaloneField
+										? 'border-l-2 border-primary bg-primary/10 font-semibold text-primary'
+										: isActive
+											? 'border-l-2 border-primary bg-primary/10 font-medium text-primary'
+											: ''}"
+								>
+									<span class="truncate">{formatFieldName(groupName)}</span>
+								</Button>
+							{:else}
+								<!-- Real Group with Children -->
+								<div class="flex items-center">
+									<Button
+										variant="ghost"
+										size="sm"
+										onclick={(event) => {
+											event.preventDefault();
+											event.stopPropagation();
+											const wasExpanded = expandedGroup === groupName;
+											toggleGroup(groupName);
+											// Switch to editor view and scroll if expanding
+											if (!wasExpanded) {
+												onSectionClick?.(groupName);
+												scrollToGroup(groupName, false); // Don't let scrollToGroup override the toggle
+											}
+										}}
+										class="h-8 w-full justify-start px-2 {isActive
+											? 'border-l-2 border-primary bg-primary/10 font-medium text-primary'
+											: ''}"
+									>
+										<ChevronRight
+											class="mr-2 h-3 w-3 transition-transform duration-200 {isExpanded
+												? 'rotate-90'
+												: ''}"
+										/>
+										<span class="truncate">{@html highlightedGroupLabel(groupName)}</span>
+										<span class="ml-auto text-xs text-muted-foreground">
+											{paths.length}
+										</span>
+									</Button>
+								</div>
 
-                        <!-- Group Fields with subsection headings for deep keys -->
-                        {#if isExpanded}
-                            <div
-                                class="ml-6 overflow-hidden border-l border-border/30 pl-3"
-                                transition:slide={{ duration: 200, axis: 'y' }}
-                            >
-                                {#each groupBySecondSegment(paths) as subsection}
-                                    {#if subsection.children.length === 1 && subsection.key !== '(root)'}
-                                        {@const path = subsection.children[0]}
-                                        {@const deepChildrenCount = getDeepChildrenCount(path, allPaths)}
-                                        {@const isActiveField = currentActiveField === path}
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            onclick={(event) => {
-                                                event.preventDefault();
-                                                event.stopPropagation();
-                                                onSectionClick?.(path);
-                                                scrollToField(path);
-                                            }}
-                                            class="h-7 w-full justify-start px-2 text-xs {isActiveField ? 'text-foreground font-semibold bg-primary/5' : 'text-muted-foreground'} hover:bg-accent/50 hover:text-foreground"
-                                        >
-                                            <span class="truncate">{@html highlightedFieldLabel(path)}</span>
-                                            {#if deepChildrenCount > 0}
-                                                <span class="ml-auto rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">{deepChildrenCount}</span>
-                                            {/if}
-                                        </Button>
-                                    {:else}
-                                        <div class="mt-2 first:mt-0">
-                                            {#if subsection.key !== '(root)'}
-                                                <div class="mb-1.5 text-[11px] font-medium uppercase tracking-wide text-muted-foreground/80">{subsection.label}</div>
-                                            {/if}
-                                            <div class="space-y-0.5">
-                                                {#each subsection.children as path}
-                                                    {@const deepChildrenCount = getDeepChildrenCount(path, allPaths)}
-                                                    {@const isActiveField = currentActiveField === path}
-                                                    <Button
-                                                        variant="ghost"
-                                                        size="sm"
-                                                        onclick={(event) => {
-                                                            event.preventDefault();
-                                                            event.stopPropagation();
-                                                            // Switch to editor view and scroll to field
-                                                            onSectionClick?.(path);
-                                                            scrollToField(path);
-                                                        }}
-                                                        class="h-7 w-full justify-start px-2 text-xs {isActiveField ? 'text-foreground font-semibold bg-primary/5' : 'text-muted-foreground'} hover:bg-accent/50 hover:text-foreground"
-                                                    >
-                                                        <span class="truncate">{@html highlightedFieldLabel(path)}</span>
-                                                        {#if deepChildrenCount > 0}
-                                                            <span class="ml-auto rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground">{deepChildrenCount}</span>
-                                                        {/if}
-                                                    </Button>
-                                                {/each}
-                                            </div>
-                                        </div>
-                                    {/if}
-                                {/each}
-                            </div>
-                        {/if}
-					{/if}
-				</div>
-			{/each}
+								<!-- Group Fields with subsection headings for deep keys -->
+								{#if isExpanded}
+									<div
+										class="ml-6 overflow-hidden border-l border-border/30 pl-3"
+										transition:slide={{ duration: 200, axis: 'y' }}
+									>
+										{#each groupBySecondSegment(paths) as subsection}
+											{#if subsection.children.length === 1 && subsection.key !== '(root)'}
+												{@const path = subsection.children[0]}
+												{@const deepChildrenCount = getDeepChildrenCount(path, allPaths)}
+												{@const isActiveField = currentActiveField === path}
+												<Button
+													variant="ghost"
+													size="sm"
+													onclick={(event) => {
+														event.preventDefault();
+														event.stopPropagation();
+														onSectionClick?.(path);
+														scrollToField(path);
+													}}
+													class="h-7 w-full justify-start px-2 text-xs {isActiveField
+														? 'bg-primary/5 font-semibold text-foreground'
+														: 'text-muted-foreground'} hover:bg-accent/50 hover:text-foreground"
+												>
+													<span class="truncate">{@html highlightedFieldLabel(path)}</span>
+													{#if deepChildrenCount > 0}
+														<span
+															class="ml-auto rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+															>{deepChildrenCount}</span
+														>
+													{/if}
+												</Button>
+											{:else}
+												<div class="mt-2 first:mt-0">
+													{#if subsection.key !== '(root)'}
+														<div
+															class="mb-1.5 text-[11px] font-medium tracking-wide text-muted-foreground/80 uppercase"
+														>
+															{subsection.label}
+														</div>
+													{/if}
+													<div class="space-y-0.5">
+														{#each subsection.children as path}
+															{@const deepChildrenCount = getDeepChildrenCount(path, allPaths)}
+															{@const isActiveField = currentActiveField === path}
+															<Button
+																variant="ghost"
+																size="sm"
+																onclick={(event) => {
+																	event.preventDefault();
+																	event.stopPropagation();
+																	// Switch to editor view and scroll to field
+																	onSectionClick?.(path);
+																	scrollToField(path);
+																}}
+																class="h-7 w-full justify-start px-2 text-xs {isActiveField
+																	? 'bg-primary/5 font-semibold text-foreground'
+																	: 'text-muted-foreground'} hover:bg-accent/50 hover:text-foreground"
+															>
+																<span class="truncate">{@html highlightedFieldLabel(path)}</span>
+																{#if deepChildrenCount > 0}
+																	<span
+																		class="ml-auto rounded bg-muted px-1.5 py-0.5 text-xs text-muted-foreground"
+																		>{deepChildrenCount}</span
+																	>
+																{/if}
+															</Button>
+														{/each}
+													</div>
+												</div>
+											{/if}
+										{/each}
+									</div>
+								{/if}
+							{/if}
+						</div>
+					{/each}
 				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<!-- Footer (Fixed) -->
 	<!-- <div class="border-t p-4">
-		<p class="text-xs text-muted-foreground text-center">
+		<p class="text-center text-xs text-muted-foreground">
 			Created by <span class="font-medium text-foreground">Paul Park</span>
 		</p>
 	</div> -->

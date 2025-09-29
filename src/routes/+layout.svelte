@@ -1,6 +1,5 @@
 <script lang="ts">
 	import '../app.css';
-	import favicon from '$lib/assets/favicon.svg';
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { Download, Upload } from 'lucide-svelte';
 	import ImportDialog from '$lib/components/ImportDialog.svelte';
@@ -37,7 +36,34 @@
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+	<!-- Favicon -->
+	<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+	<link rel="shortcut icon" href="/favicon.ico" />
+	<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+	<link rel="manifest" href="/site.webmanifest" />
+
+	<script>
+		// Apply theme immediately to prevent FOUC
+		try {
+			const savedTheme = localStorage.getItem('theme');
+			if (savedTheme === 'dark') {
+				document.documentElement.classList.add('dark');
+			} else if (savedTheme === 'light') {
+				document.documentElement.classList.remove('dark');
+			} else if (savedTheme === 'system' || !savedTheme) {
+				// For system theme or no saved preference, check system preference
+				if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+					document.documentElement.classList.add('dark');
+				} else {
+					document.documentElement.classList.remove('dark');
+				}
+			}
+		} catch (e) {
+			// Fallback to light mode if localStorage is not available
+			document.documentElement.classList.remove('dark');
+		}
+	</script>
 	<title>Zed Settings Editor</title>
 	<meta name="description" content="GUI editor for Zed editor settings" />
 </svelte:head>

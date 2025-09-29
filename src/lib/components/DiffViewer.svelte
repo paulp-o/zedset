@@ -170,26 +170,35 @@
 									<CardTitle class="text-base font-medium tracking-tight">
 										{section.replace(/[_-]/g, ' ')}
 									</CardTitle>
-									<p class="text-xs text-muted-foreground font-mono">{section}</p>
+									<p class="font-mono text-xs text-muted-foreground">{section}</p>
 								</div>
 							</Button>
 							<div class="flex items-center gap-2">
 								{#if changes.added.length > 0}
-									<Badge variant="outline" class="text-xs px-2 py-0.5 bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800">
+									<Badge
+										variant="outline"
+										class="border-emerald-200 bg-emerald-50 px-2 py-0.5 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+									>
 										+{changes.added.length}
 									</Badge>
 								{/if}
 								{#if changes.modified.length > 0}
-									<Badge variant="outline" class="text-xs px-2 py-0.5 bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800">
+									<Badge
+										variant="outline"
+										class="border-blue-200 bg-blue-50 px-2 py-0.5 text-xs text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
+									>
 										~{changes.modified.length}
 									</Badge>
 								{/if}
 								{#if changes.removed.length > 0}
-									<Badge variant="outline" class="text-xs px-2 py-0.5 bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800">
+									<Badge
+										variant="outline"
+										class="border-red-200 bg-red-50 px-2 py-0.5 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300"
+									>
 										-{changes.removed.length}
 									</Badge>
 								{/if}
-								<Badge variant="outline" class="text-xs px-2 py-0.5">
+								<Badge variant="outline" class="px-2 py-0.5 text-xs">
 									{totalChanges}
 								</Badge>
 							</div>
@@ -204,7 +213,9 @@
 									<div class="rounded-lg border-l-4 {getChangeBackgroundClass('added')} p-4">
 										<div class="mb-3 flex items-center justify-between">
 											<div class="flex items-center gap-3">
-												<div class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50">
+												<div
+													class="flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 dark:bg-emerald-900/50"
+												>
 													<Icon class="h-3 w-3 {getChangeColorClass('added')}" />
 												</div>
 												<div>
@@ -212,13 +223,18 @@
 													<p class="text-xs text-muted-foreground">Added setting</p>
 												</div>
 											</div>
-											<Badge variant="outline" class="text-xs bg-emerald-50 text-emerald-700 border-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:border-emerald-800">
+											<Badge
+												variant="outline"
+												class="border-emerald-200 bg-emerald-50 text-xs text-emerald-700 dark:border-emerald-800 dark:bg-emerald-950/50 dark:text-emerald-300"
+											>
 												New
 											</Badge>
 										</div>
 										<div class="rounded-md bg-background/50 p-3 font-mono text-xs">
-											<div class="text-muted-foreground mb-1">Value:</div>
-											<div class="text-foreground">{formatValue(getValueByPath(userSettings, path))}</div>
+											<div class="mb-1 text-muted-foreground">Value:</div>
+											<div class="text-foreground">
+												{formatValue(getValueByPath(userSettings, path))}
+											</div>
 										</div>
 									</div>
 								{/each}
@@ -228,7 +244,9 @@
 									<div class="rounded-lg border-l-4 {getChangeBackgroundClass('modified')} p-4">
 										<div class="mb-3 flex items-center justify-between">
 											<div class="flex items-center gap-3">
-												<div class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50">
+												<div
+													class="flex h-6 w-6 items-center justify-center rounded-full bg-blue-100 dark:bg-blue-900/50"
+												>
 													<Icon class="h-3 w-3 {getChangeColorClass('modified')}" />
 												</div>
 												<div>
@@ -236,19 +254,22 @@
 													<p class="text-xs text-muted-foreground">Modified setting</p>
 												</div>
 											</div>
-											<Badge variant="outline" class="text-xs bg-blue-50 text-blue-700 border-blue-200 dark:bg-blue-950/50 dark:text-blue-300 dark:border-blue-800">
+											<Badge
+												variant="outline"
+												class="border-blue-200 bg-blue-50 text-xs text-blue-700 dark:border-blue-800 dark:bg-blue-950/50 dark:text-blue-300"
+											>
 												Changed
 											</Badge>
 										</div>
 										<div class="grid grid-cols-2 gap-4">
 											<div class="rounded-md bg-background/30 p-3">
-												<div class="text-xs text-muted-foreground mb-2 font-medium">Default</div>
+												<div class="mb-2 text-xs font-medium text-muted-foreground">Default</div>
 												<div class="font-mono text-xs text-foreground/80">
 													{formatValue(getValueByPath(defaults, path))}
 												</div>
 											</div>
 											<div class="rounded-md bg-background/50 p-3">
-												<div class="text-xs text-muted-foreground mb-2 font-medium">Current</div>
+												<div class="mb-2 text-xs font-medium text-muted-foreground">Current</div>
 												<div class="font-mono text-xs text-foreground">
 													{formatValue(getValueByPath(userSettings, path))}
 												</div>
@@ -262,7 +283,9 @@
 									<div class="rounded-lg border-l-4 {getChangeBackgroundClass('removed')} p-4">
 										<div class="mb-3 flex items-center justify-between">
 											<div class="flex items-center gap-3">
-												<div class="flex h-6 w-6 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50">
+												<div
+													class="flex h-6 w-6 items-center justify-center rounded-full bg-red-100 dark:bg-red-900/50"
+												>
 													<Icon class="h-3 w-3 {getChangeColorClass('removed')}" />
 												</div>
 												<div>
@@ -270,13 +293,18 @@
 													<p class="text-xs text-muted-foreground">Removed setting</p>
 												</div>
 											</div>
-											<Badge variant="outline" class="text-xs bg-red-50 text-red-700 border-red-200 dark:bg-red-950/50 dark:text-red-300 dark:border-red-800">
+											<Badge
+												variant="outline"
+												class="border-red-200 bg-red-50 text-xs text-red-700 dark:border-red-800 dark:bg-red-950/50 dark:text-red-300"
+											>
 												Removed
 											</Badge>
 										</div>
 										<div class="rounded-md bg-background/30 p-3 font-mono text-xs">
-											<div class="text-muted-foreground mb-1">Previous value:</div>
-											<div class="text-foreground/80">{formatValue(getValueByPath(defaults, path))}</div>
+											<div class="mb-1 text-muted-foreground">Previous value:</div>
+											<div class="text-foreground/80">
+												{formatValue(getValueByPath(defaults, path))}
+											</div>
 										</div>
 									</div>
 								{/each}

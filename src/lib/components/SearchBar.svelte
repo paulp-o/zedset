@@ -4,10 +4,7 @@
 	import { cn } from '$lib/utils';
 
 	// Props
-	export let searchQuery = '';
-	export let showChangedOnly = false;
-	export let changedCount = 0;
-	export let totalCount = 0;
+	const { searchQuery = '', showChangedOnly = false, changedCount = 0, totalCount = 0 } = $props();
 
 	// Event dispatcher
 	const dispatch = createEventDispatcher<{
@@ -75,7 +72,7 @@
 			/>
 
 			{#if searchQuery}
-				<button
+				<Button
 					type="button"
 					onclick={handleClearSearch}
 					class="absolute top-1/2 right-3 -translate-y-1/2 text-muted-foreground hover:text-foreground"
@@ -88,7 +85,7 @@
 							d="M6 18L18 6M6 6l12 12"
 						></path>
 					</svg>
-				</button>
+				</Button>
 			{/if}
 		</div>
 

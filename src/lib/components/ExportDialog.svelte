@@ -224,30 +224,34 @@
 						{/if}
 
 						<!-- Two Column Layout -->
-						<div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+						<div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
 							<!-- Left Column: JSON Preview -->
 							<div class="space-y-4">
 								<div class="border-b pb-3">
-									<h3 class="text-lg font-semibold">Settings JSON</h3>
+									<h3 class="text-lg font-semibold">Config Content</h3>
 									<p class="text-sm text-muted-foreground">Preview your configuration</p>
 								</div>
-								
+
 								<Textarea
 									readonly
 									value={exportResult.json}
-									class="min-h-[400px] bg-muted font-mono text-sm resize-none"
+									class="min-h-[400px] resize-none bg-muted font-mono text-sm"
 									placeholder="Loading..."
 								/>
 								{#if exportResult.filename}
 									<p class="text-xs text-muted-foreground">
-										Copy this file to your Zed config directory. <a href="https://zed.dev/docs/configuring-zed#settings-files" target="_blank" class="text-primary underline">Where is it?</a>
+										Copy this file to your Zed config directory. <a
+											href="https://zed.dev/docs/configuring-zed#settings-files"
+											target="_blank"
+											class="text-primary underline">Where is it?</a
+										>
 									</p>
 								{/if}
-								
+
 								<!-- JSON Export Actions -->
 								<div class="flex gap-3">
-									<Button 
-										onclick={handleDownload} 
+									<Button
+										onclick={handleDownload}
 										disabled={!hasChanges()}
 										class="flex-1 justify-start"
 										size="lg"
@@ -259,9 +263,9 @@
 											No Changes to Download
 										{/if}
 									</Button>
-									<Button 
+									<Button
 										variant="outline"
-										onclick={handleCopy} 
+										onclick={handleCopy}
 										disabled={!exportResult.json}
 										class="flex-1 justify-start"
 										size="lg"
@@ -293,13 +297,13 @@
 												<Textarea
 													readonly
 													value={shareUrl}
-													class="min-h-[80px] max-h-[120px] bg-muted font-mono text-xs resize-none flex-1"
+													class="max-h-[120px] min-h-[80px] flex-1 resize-none bg-muted font-mono text-xs"
 													placeholder="Generating share URL..."
 												/>
-												<Button 
+												<Button
 													variant="outline"
 													onclick={handleCopyUrl}
-													class="shrink-0 h-[80px]"
+													class="h-[80px] shrink-0"
 													size="sm"
 												>
 													{#if urlCopied}
@@ -331,11 +335,20 @@
 											{/if} -->
 										</div>
 									</div>
+								{:else}
+									<div class="py-4 text-center">
+										<p class="text-sm text-muted-foreground">
+											No changes to share
+										</p>
+									</div>
 								{/if}
-								
+
+								<!-- Share link will be generated automatically -->
 								{#if !shareUrl && hasChanges()}
-									<div class="text-center py-4">
-										<p class="text-sm text-muted-foreground">Share link will be generated automatically</p>
+									<div class="py-4 text-center">
+										<p class="text-sm text-muted-foreground">
+											Share link will be generated automatically
+										</p>
 									</div>
 								{/if}
 							</div>

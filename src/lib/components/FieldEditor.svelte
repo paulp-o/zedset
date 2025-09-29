@@ -67,7 +67,9 @@
 	let hasValueMatch = $derived(() => {
 		const q = uiStore.searchQuery;
 		if (!q || q.length < 2) return false;
-		return String(stringValue ?? '').toLowerCase().includes(q.toLowerCase());
+		return String(stringValue ?? '')
+			.toLowerCase()
+			.includes(q.toLowerCase());
 	});
 
 	// Indicator: whether the current value is an object/array
@@ -124,28 +126,28 @@
 					}
 					break;
 
-				default: // string (but allow object/array detection)
-					{
-						const trimmed = newStringValue.trim();
-						// Detect JSON-like object/array input and parse it
-						if (
-							(trimmed.startsWith('{') && trimmed.endsWith('}')) ||
-							(trimmed.startsWith('[') && trimmed.endsWith(']'))
-						) {
-							try {
-								const parsed = JSON.parse(trimmed);
-								// Only accept object/array results; otherwise keep as string
-								if (typeof parsed === 'object' && parsed !== null) {
-									newValue = parsed;
-									break;
-								}
-							} catch (_) {
-								// Fall through to saving as string
+				default: {
+					// string (but allow object/array detection)
+					const trimmed = newStringValue.trim();
+					// Detect JSON-like object/array input and parse it
+					if (
+						(trimmed.startsWith('{') && trimmed.endsWith('}')) ||
+						(trimmed.startsWith('[') && trimmed.endsWith(']'))
+					) {
+						try {
+							const parsed = JSON.parse(trimmed);
+							// Only accept object/array results; otherwise keep as string
+							if (typeof parsed === 'object' && parsed !== null) {
+								newValue = parsed;
+								break;
 							}
+						} catch (_) {
+							// Fall through to saving as string
 						}
-						newValue = newStringValue;
-						break;
 					}
+					newValue = newStringValue;
+					break;
+				}
 			}
 
 			onUpdate(newValue);
@@ -160,33 +162,37 @@
 	}
 </script>
 
-<div class="space-y-3 py-4 {changed ? 'bg-orange-50/50 dark:bg-orange-950/50' : ''}">
+<div class="space-y-3 py-4  {changed ? 'bg-orange-50/50 dark:bg-orange-950/50' : ''}">
 	<!-- Header -->
 	<div class="flex items-start justify-between">
 		<div class="space-y-1">
-            {#if !hideLabel}
-                <div class="flex items-center gap-2">
-                    <Label class="text-sm font-medium">
-                        {@html highlightedLabel()}
-                    </Label>
-                    {#if changed}
-                        <Badge variant="outline" class="text-xs">Modified</Badge>
-                    {/if}
-                    {#if isStructuredValue()}
-                        <span class="text-[10px] rounded px-1.5 py-0.5 bg-muted text-muted-foreground">object</span>
-                    {/if}
-                </div>
-			{:else if changed}
+			{#if !hideLabel}
 				<div class="flex items-center gap-2">
+					<Label class="text-sm font-medium">
+						{@html highlightedLabel()}
+					</Label>
+					{#if changed}
+						<Badge variant="outline" class="text-xs">Modified</Badge>
+					{/if}
+					{#if isStructuredValue()}
+						<span class="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground"
+							>object</span
+						>
+					{/if}
+				</div>
+			{:else if changed}
+				<div class="flex items-center gap-2 " >
 					<Badge variant="outline" class="text-xs">Modified</Badge>
 				</div>
 			{/if}
 
-            {#if description}
-                <div class="flex items-start gap-2 text-sm text-muted-foreground">
-                    <Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
-                    <div class="whitespace-pre-line markdown-content">{@html highlightedDescriptionHTML()}</div>
-                </div>
+			{#if description}
+				<div class="flex items-start gap-2 text-sm text-muted-foreground">
+					<Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
+					<div class="markdown-content whitespace-pre-line">
+						{@html highlightedDescriptionHTML()}
+					</div>
+				</div>
 			{/if}
 		</div>
 
@@ -204,11 +210,11 @@
 				<Switch checked={Boolean(value)} onCheckedChange={handleCheckboxChange} />
 				<span class="font-mono text-sm">{value ? 'true' : 'false'}</span>
 			</div>
-        {:else if fieldType() === 'object' || fieldType() === 'array'}
+		{:else if fieldType() === 'object' || fieldType() === 'array'}
 			<Textarea
 				value={stringValue}
 				oninput={handleInputChange}
-				class="min-h-[100px] font-mono text-sm"
+				class="min-h-[100px] max-w-md font-mono text-sm"
 				placeholder={fieldType() === 'array' ? '[]' : '{}'}
 			/>
 		{:else}
@@ -216,21 +222,21 @@
 				type={fieldType() === 'number' ? 'number' : 'text'}
 				value={stringValue}
 				oninput={handleInputChange}
-				class={fieldType() === 'number' ? '' : 'font-mono'}
+				class="max-w-md {fieldType() === 'number' ? '' : 'font-mono'}"
 			/>
 		{/if}
 
-        <div class="flex items-center justify-between">
-            {#if hasValueMatch()}
-                <div class="text-xs text-muted-foreground">
-                    <span>Matches: </span>
-                    <span class="font-mono">{@html highlightedValueHTML()}</span>
-                </div>
-            {/if}
-            {#if isStructuredValue()}
-                <div class="text-[10px] text-muted-foreground">Stored as object</div>
-            {/if}
-        </div>
+		<div class="flex items-center justify-between">
+			{#if hasValueMatch()}
+				<div class="text-xs text-muted-foreground">
+					<span>Matches: </span>
+					<span class="font-mono">{@html highlightedValueHTML()}</span>
+				</div>
+			{/if}
+			{#if isStructuredValue()}
+				<div class="text-[10px] text-muted-foreground">Stored as object</div>
+			{/if}
+		</div>
 
 		<!-- Default Value Display (only when changed) -->
 		{#if changed}

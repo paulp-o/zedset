@@ -3,18 +3,7 @@
 	import { Button } from '$lib/components/ui/button/index.js';
 	import { themeStore } from '$lib/stores/theme.svelte.js';
 
-	function getThemeIcon(theme: string) {
-		switch (theme) {
-			case 'light':
-				return Sun;
-			case 'dark':
-				return Moon;
-			default:
-				return Monitor;
-		}
-	}
-
-	function getThemeLabel(theme: string) {
+	function getLabelForTheme(theme: string) {
 		switch (theme) {
 			case 'light':
 				return 'Switch to dark mode';
@@ -25,8 +14,8 @@
 		}
 	}
 
-	const CurrentIcon = $derived(getThemeIcon(themeStore.theme));
-	const currentLabel = $derived(getThemeLabel(themeStore.theme));
+	const currentTheme = $derived(themeStore.theme);
+	const currentLabel = $derived(getLabelForTheme(currentTheme));
 </script>
 
 <Button
@@ -36,6 +25,12 @@
 	onclick={() => themeStore.toggleTheme()}
 	title={currentLabel}
 >
-	<CurrentIcon class="h-4 w-4" />
+	{#if currentTheme === 'light'}
+		<Sun class="h-4 w-4" />
+	{:else if currentTheme === 'dark'}
+		<Moon class="h-4 w-4" />
+	{:else}
+		<Monitor class="h-4 w-4" />
+	{/if}
 	<span class="sr-only">{currentLabel}</span>
 </Button>
