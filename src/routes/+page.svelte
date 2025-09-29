@@ -340,6 +340,18 @@
 		// This prevents duplication where group comments show up on individual fields
 		return settingsStore.docsMap[path] || null;
 	}
+
+	// Generate Zed documentation URL for a group
+	function getZedDocsUrl(groupName: string): string {
+		// Convert group name to URL format (lowercase, spaces to dashes)
+		const urlSlug = groupName
+			.toLowerCase()
+			.replace(/[_]/g, '-')  // Convert underscores to dashes
+			.replace(/\s+/g, '-')  // Convert spaces to dashes
+			.replace(/[^a-z0-9-]/g, ''); // Remove special characters
+
+		return `https://zed.dev/docs/configuring-zed#${urlSlug}`;
+	}
 </script>
 
 <div class="flex h-[calc(100vh-3.5rem)]">
@@ -555,9 +567,20 @@
 										: 'opacity-0'}"
 								></div>
 								<CardHeader class="pt-4">
-									<CardTitle class="text-lg capitalize">
-										{groupName.replace(/[_-]/g, ' ')}
-									</CardTitle>
+									<div class="flex items-center justify-between">
+										<CardTitle class="text-lg capitalize">
+											{groupName.replace(/[_-]/g, ' ')}
+										</CardTitle>
+										<a
+											href={getZedDocsUrl(groupName)}
+											target="_blank"
+											rel="noopener noreferrer"
+											class="text-sm text-muted-foreground underline underline-offset-2 transition-colors hover:text-primary"
+											title={`Read official ${groupName.replace(/[_-]/g, ' ')} documentation`}
+										>
+											Read official docs
+										</a>
+									</div>
 									{#if getGroupDocumentation(groupName)}
 										<div
 											class="markdown-content mt-0 border-l-4 border-blue-200 pl-3 text-sm text-muted-foreground"
