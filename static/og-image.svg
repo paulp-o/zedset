@@ -1,0 +1,55 @@
+<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="1200" height="630" fill="#0A0A0A"/>
+
+  <!-- Grid pattern -->
+  <g opacity="0.3">
+    <defs>
+      <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
+        <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#333" stroke-width="0.5"/>
+      </pattern>
+    </defs>
+    <rect width="1200" height="630" fill="url(#grid)"/>
+  </g>
+
+  <!-- Main content -->
+  <g transform="translate(100, 150)">
+    <!-- Logo/Icon placeholder -->
+    <g transform="translate(0, 0)">
+      <rect x="0" y="0" width="80" height="80" rx="12" fill="#3B82F6"/>
+      <text x="40" y="52" font-family="Arial, sans-serif" font-size="36" font-weight="bold" text-anchor="middle" fill="white">Z</text>
+    </g>
+
+    <!-- Title -->
+    <text x="110" y="35" font-family="Arial, sans-serif" font-size="48" font-weight="bold" fill="white">ZedSet</text>
+    <text x="110" y="70" font-family="Arial, sans-serif" font-size="24" fill="#9CA3AF">Visual GUI Editor for Zed Editor Settings</text>
+
+    <!-- Features list -->
+    <g transform="translate(0, 140)">
+      <text x="0" y="0" font-family="Arial, sans-serif" font-size="20" font-weight="600" fill="#E5E7EB">Key Features:</text>
+
+      <g transform="translate(20, 40)">
+        <circle cx="0" cy="-5" r="3" fill="#3B82F6"/>
+        <text x="15" y="0" font-family="Arial, sans-serif" font-size="18" fill="#D1D5DB">Import and export Zed settings with validation</text>
+      </g>
+
+      <g transform="translate(20, 75)">
+        <circle cx="0" cy="-5" r="3" fill="#8B5CF6"/>
+        <text x="15" y="0" font-family="Arial, sans-serif" font-size="18" fill="#D1D5DB">Live editing with intuitive interface</text>
+      </g>
+
+      <g transform="translate(20, 110)">
+        <circle cx="0" cy="-5" r="3" fill="#10B981"/>
+        <text x="15" y="0" font-family="Arial, sans-serif" font-size="18" fill="#D1D5DB">Real-time search and filtering</text>
+      </g>
+
+      <g transform="translate(20, 145)">
+        <circle cx="0" cy="-5" r="3" fill="#F59E0B"/>
+        <text x="15" y="0" font-family="Arial, sans-serif" font-size="18" fill="#D1D5DB">No installation required - runs in browser</text>
+      </g>
+    </g>
+  </g>
+
+  <!-- Bottom right URL -->
+  <text x="1100" y="600" font-family="Arial, sans-serif" font-size="16" text-anchor="end" fill="#6B7280">zedset.paulp-o.dev</text>
+</svg>

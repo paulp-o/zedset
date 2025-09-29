@@ -55,14 +55,14 @@
 	<meta name="revisit-after" content="7 days" />
 
 	<!-- Canonical URL -->
-	<link rel="canonical" href="https://zedset.vercel.app/" />
+	<link rel="canonical" href="https://zedset.paulp-o.dev/" />
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website" />
-	<meta property="og:url" content="https://zedset.vercel.app/" />
+	<meta property="og:url" content="https://zedset.paulp-o.dev/" />
 	<meta property="og:title" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
 	<meta property="og:description" content="A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface." />
-	<meta property="og:image" content="https://zedset.vercel.app/og-image.png" />
+	<meta property="og:image" content="https://zedset.paulp-o.dev/og-image.png" />
 	<meta property="og:image:width" content="1200" />
 	<meta property="og:image:height" content="630" />
 	<meta property="og:image:alt" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
@@ -71,10 +71,10 @@
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image" />
-	<meta property="twitter:url" content="https://zedset.vercel.app/" />
+	<meta property="twitter:url" content="https://zedset.paulp-o.dev/" />
 	<meta property="twitter:title" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
 	<meta property="twitter:description" content="A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface." />
-	<meta property="twitter:image" content="https://zedset.vercel.app/og-image.png" />
+	<meta property="twitter:image" content="https://zedset.paulp-o.dev/og-image.png" />
 	<meta property="twitter:image:alt" content="ZedSet - Visual GUI Editor for Zed Editor Settings" />
 
 	<!-- Additional SEO Meta Tags -->
@@ -98,7 +98,7 @@
 		"@type": "SoftwareApplication",
 		"name": "ZedSet",
 		"description": "A powerful, user-friendly web-based GUI editor for Zed editor configuration files. Import, edit, and export your Zed settings with live validation, search, and intuitive interface.",
-		"url": "https://zedset.vercel.app/",
+		"url": "https://zedset.paulp-o.dev/",
 		"applicationCategory": "DeveloperApplication",
 		"operatingSystem": "Web Browser",
 		"offers": {
@@ -110,7 +110,7 @@
 			"@type": "Organization",
 			"name": "ZedSet"
 		},
-		"screenshot": "https://zedset.vercel.app/og-image.png",
+		"screenshot": "https://zedset.paulp-o.dev/og-image.png",
 		"softwareVersion": "1.0",
 		"aggregateRating": {
 			"@type": "AggregateRating",

@@ -4,7 +4,7 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://zedset.vercel.app/sitemap.xml
+Sitemap: https://zedset.paulp-o.dev/sitemap.xml
 
 # Crawl delay for bots (1 second)
 Crawl-delay: 1
