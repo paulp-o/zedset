@@ -10,6 +10,13 @@
 	import { themeStore } from '$lib/stores/theme.svelte.js';
 	import { injectAnalytics } from '@vercel/analytics/sveltekit'
 
+	// Only inject analytics in production
+	if (import.meta.env.PROD) {
+		injectAnalytics({ mode: 'production' });
+	} else {
+		injectAnalytics({ mode: 'development' });
+	}
+
 	let { children } = $props();
 
 	// Dialog state
