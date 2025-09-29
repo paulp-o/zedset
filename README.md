@@ -120,7 +120,3 @@ pnpm dev
 This project is open source and available under the [MIT License](LICENSE).
 
 ---
-
-**Made with ❤️ by [Paul Park](https://github.com/paulp-o)**
-
-_Empowering developers to customize Zed Editor with ease and confidence._
