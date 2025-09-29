@@ -177,48 +177,27 @@
 		<div class="mb-16">
 			<h2 class="mb-12 text-center text-3xl font-light text-foreground">How to use ZedSet</h2>
 			<div class="space-y-8">
-				<div class="flex items-start gap-6">
-					<div
-						class="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary"
-					>
-						<span class="text-sm font-medium text-primary-foreground">1</span>
-					</div>
-					<div>
-						<h3 class="mb-2 font-medium text-foreground">Browse settings</h3>
-						<p class="text-muted-foreground">
-							Navigate categories like Appearance, Editor, and Terminal using the sidebar. Click any
-							group to jump to that section.
-						</p>
-					</div>
+				<div>
+					<h3 class="mb-2 font-medium text-foreground">Browse settings</h3>
+					<p class="text-muted-foreground">
+						Navigate categories like Appearance, Editor, and Terminal using the sidebar. Click any
+						group to jump to that section.
+					</p>
 				</div>
 
-				<div class="flex items-start gap-6">
-					<div
-						class="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary"
-					>
-						<span class="text-sm font-medium text-primary-foreground">2</span>
-					</div>
-					<div>
-						<h3 class="mb-2 font-medium text-foreground">Search & modify</h3>
-						<p class="text-muted-foreground">
-							Use the search bar to find specific settings, then edit values directly. Changes are
-							highlighted automatically.
-						</p>
-					</div>
-					</div>
-					
-				<div class="flex items-start gap-6">
-					<div
-						class="mt-1 flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full bg-primary"
-					>
-						<span class="text-sm font-medium text-primary-foreground">3</span>
-					</div>
-					<div>
-						<h3 class="mb-2 font-medium text-foreground">Export & share</h3>
-						<p class="text-muted-foreground">
-							Download your settings as JSON, copy to clipboard, or share via URL with your team.
-						</p>
-					</div>
+				<div>
+					<h3 class="mb-2 font-medium text-foreground">Search & modify</h3>
+					<p class="text-muted-foreground">
+						Use the search bar to find specific settings, then edit values directly. Changes are
+						highlighted automatically.
+					</p>
+				</div>
+
+				<div>
+					<h3 class="mb-2 font-medium text-foreground">Export & share</h3>
+					<p class="text-muted-foreground">
+						Download your settings as JSON, copy to clipboard, or share via URL with your team.
+					</p>
 				</div>
 			</div>
 		</div>
