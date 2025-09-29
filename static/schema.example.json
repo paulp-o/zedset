@@ -1,0 +1,838 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Zed Editor Settings",
+  "description": "Configuration schema for Zed editor settings",
+  "type": "object",
+  "properties": {
+    "project_name": {
+      "type": ["string", "null"],
+      "description": "The name of the project"
+    },
+    "theme": {
+      "type": "object",
+      "properties": {
+        "mode": {
+          "type": "string",
+          "enum": ["system", "light", "dark"],
+          "default": "system",
+          "description": "Theme selection mode"
+        },
+        "light": {
+          "type": "string",
+          "default": "One Light",
+          "description": "Light theme name"
+        },
+        "dark": {
+          "type": "string",
+          "default": "One Dark",
+          "description": "Dark theme name"
+        }
+      },
+      "required": ["mode"],
+      "additionalProperties": false
+    },
+    "icon_theme": {
+      "type": "string",
+      "default": "Zed (Default)",
+      "description": "Icon theme to use"
+    },
+    "base_keymap": {
+      "type": "string",
+      "enum": ["VSCode", "Atom", "JetBrains", "None", "SublimeText", "TextMate"],
+      "default": "VSCode",
+      "description": "Base keymap configuration"
+    },
+    "features": {
+      "type": "object",
+      "properties": {
+        "edit_prediction_provider": {
+          "type": "string",
+          "enum": ["zed", "none"],
+          "default": "zed",
+          "description": "Edit prediction provider"
+        }
+      },
+      "additionalProperties": false
+    },
+    "buffer_font_family": {
+      "type": "string",
+      "default": ".ZedMono",
+      "description": "Font family for text in editor buffers"
+    },
+    "buffer_font_fallbacks": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "string"
+      },
+      "description": "Font fallbacks for buffer text"
+    },
+    "buffer_font_features": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "OpenType font features to enable"
+    },
+    "buffer_font_size": {
+      "type": "number",
+      "minimum": 6,
+      "maximum": 100,
+      "default": 15,
+      "description": "Font size for text in editor buffers"
+    },
+    "buffer_font_weight": {
+      "type": "number",
+      "minimum": 100,
+      "maximum": 900,
+      "multipleOf": 100,
+      "default": 400,
+      "description": "Font weight for buffer text"
+    },
+    "buffer_line_height": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["comfortable", "standard"]
+        },
+        {
+          "type": "number",
+          "minimum": 1.0,
+          "maximum": 3.0
+        }
+      ],
+      "default": "comfortable",
+      "description": "Line height for buffer text"
+    },
+    "ui_font_family": {
+      "type": "string",
+      "description": "Font family for UI elements"
+    },
+    "ui_font_size": {
+      "type": "number",
+      "minimum": 8,
+      "maximum": 50,
+      "default": 14,
+      "description": "Font size for UI elements"
+    },
+    "ui_font_weight": {
+      "type": "number",
+      "minimum": 100,
+      "maximum": 900,
+      "default": 400,
+      "description": "Font weight for UI elements"
+    },
+    "cursor_blink": {
+      "type": "boolean",
+      "default": true,
+      "description": "Whether the cursor should blink"
+    },
+    "scrollbar": {
+      "type": "object",
+      "properties": {
+        "show": {
+          "type": "string",
+          "enum": ["auto", "system", "always", "never"],
+          "default": "auto",
+          "description": "When to show scrollbars"
+        },
+        "cursors": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show cursor positions in scrollbar"
+        },
+        "git_diff": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show git diff indicators in scrollbar"
+        },
+        "search_results": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show search results in scrollbar"
+        },
+        "selected_symbol": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show selected symbol occurrences in scrollbar"
+        },
+        "diagnostics": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show diagnostic indicators in scrollbar"
+        }
+      },
+      "additionalProperties": false
+    },
+    "vim_mode": {
+      "type": "boolean",
+      "default": false,
+      "description": "Enable vim key bindings"
+    },
+    "relative_line_numbers": {
+      "type": "boolean",
+      "default": false,
+      "description": "Show relative line numbers"
+    },
+    "seed_search_query_from_cursor": {
+      "type": "string",
+      "enum": ["always", "never", "selection"],
+      "default": "selection",
+      "description": "When to seed search query from cursor"
+    },
+    "use_on_type_format": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable formatting while typing"
+    },
+    "formatter": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["auto", "language_server", "external"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "external": {
+              "type": "object",
+              "properties": {
+                "command": {
+                  "type": "string"
+                },
+                "arguments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["command"],
+              "additionalProperties": false
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "default": "auto",
+      "description": "Code formatter configuration"
+    },
+    "format_on_save": {
+      "oneOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "string",
+          "enum": ["on", "off"]
+        }
+      ],
+      "default": "on",
+      "description": "Whether to format code on save"
+    },
+    "code_actions_on_format": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "boolean"
+      },
+      "description": "Code actions to run on format"
+    },
+    "remove_trailing_whitespace_on_save": {
+      "type": "boolean",
+      "default": true,
+      "description": "Remove trailing whitespace when saving"
+    },
+    "ensure_final_newline_on_save": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ensure files end with newline when saving"
+    },
+    "tab_size": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 32,
+      "default": 4,
+      "description": "Number of spaces per tab"
+    },
+    "hard_tabs": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use hard tabs instead of spaces"
+    },
+    "soft_wrap": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["none", "editor_width", "preferred_line_length"]
+        },
+        {
+          "type": "number",
+          "minimum": 1
+        }
+      ],
+      "default": "none",
+      "description": "Soft wrap configuration"
+    },
+    "preferred_line_length": {
+      "type": "number",
+      "minimum": 1,
+      "maximum": 1000,
+      "default": 80,
+      "description": "Preferred line length for wrapping"
+    },
+    "show_whitespaces": {
+      "oneOf": [
+        {
+          "type": "string",
+          "enum": ["none", "all", "selection"]
+        },
+        {
+          "type": "object",
+          "properties": {
+            "leading": {
+              "type": "boolean"
+            },
+            "trailing": {
+              "type": "boolean"
+            },
+            "space": {
+              "type": "boolean"
+            },
+            "tab": {
+              "type": "boolean"
+            },
+            "nbsp": {
+              "type": "boolean"
+            }
+          },
+          "additionalProperties": false
+        }
+      ],
+      "default": "selection",
+      "description": "Whitespace display configuration"
+    },
+    "wrap_guides": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "minimum": 1
+      },
+      "description": "Column positions for wrap guides"
+    },
+    "indent_guides": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "line_width": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1
+        },
+        "active_line_width": {
+          "type": "number",
+          "minimum": 1,
+          "default": 1
+        },
+        "coloring": {
+          "type": "string",
+          "enum": ["disabled", "fixed", "indent_aware"],
+          "default": "disabled"
+        }
+      },
+      "additionalProperties": false
+    },
+    "gutter": {
+      "type": "object",
+      "properties": {
+        "line_numbers": {
+          "type": "boolean",
+          "default": true
+        },
+        "code_actions": {
+          "type": "boolean",
+          "default": true
+        },
+        "runnables": {
+          "type": "boolean",
+          "default": true
+        },
+        "folds": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "hover_popover_enabled": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable hover popovers"
+    },
+    "inlay_hints": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_type_hints": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_parameter_hints": {
+          "type": "boolean",
+          "default": true
+        },
+        "show_other_hints": {
+          "type": "boolean",
+          "default": true
+        },
+        "edit_debounce_ms": {
+          "type": "number",
+          "minimum": 0,
+          "default": 700
+        },
+        "scroll_debounce_ms": {
+          "type": "number",
+          "minimum": 0,
+          "default": 50
+        }
+      },
+      "additionalProperties": false
+    },
+    "search": {
+      "type": "object",
+      "properties": {
+        "whole_word": {
+          "type": "boolean",
+          "default": false
+        },
+        "case_sensitive": {
+          "type": "boolean",
+          "default": false
+        },
+        "include_ignored": {
+          "type": "boolean",
+          "default": false
+        },
+        "wrap": {
+          "type": "boolean",
+          "default": true
+        },
+        "regex": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "auto_update": {
+      "type": "boolean",
+      "default": true,
+      "description": "Enable automatic updates"
+    },
+    "telemetry": {
+      "type": "object",
+      "properties": {
+        "diagnostics": {
+          "type": "boolean",
+          "default": true
+        },
+        "metrics": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "terminal": {
+      "type": "object",
+      "properties": {
+        "alternate_scroll": {
+          "type": "string",
+          "enum": ["off", "on"],
+          "default": "off"
+        },
+        "blinking": {
+          "type": "string",
+          "enum": ["off", "terminal_controlled", "on"],
+          "default": "terminal_controlled"
+        },
+        "copy_on_select": {
+          "type": "boolean",
+          "default": false
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right", "bottom"],
+          "default": "bottom"
+        },
+        "env": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "font_family": {
+          "type": ["string", "null"]
+        },
+        "font_features": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "font_size": {
+          "type": ["number", "null"],
+          "minimum": 6
+        },
+        "font_weight": {
+          "type": "number",
+          "minimum": 100,
+          "maximum": 900
+        },
+        "line_height": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["comfortable", "standard"]
+            },
+            {
+              "type": "number",
+              "minimum": 1.0
+            }
+          ]
+        },
+        "option_as_meta": {
+          "type": "boolean",
+          "default": false
+        },
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "shell": {
+          "oneOf": [
+            {
+              "type": "string",
+              "enum": ["system"]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "program": {
+                  "type": "string"
+                },
+                "args": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              },
+              "required": ["program"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "toolbar": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "boolean",
+              "default": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "working_directory": {
+          "type": "string",
+          "enum": ["current_project_directory", "first_project_directory"],
+          "default": "current_project_directory"
+        }
+      },
+      "additionalProperties": false
+    },
+    "project_panel": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "left"
+        },
+        "file_icons": {
+          "type": "boolean",
+          "default": true
+        },
+        "folder_icons": {
+          "type": "boolean",
+          "default": true
+        },
+        "git_status": {
+          "type": "boolean",
+          "default": true
+        },
+        "indent_size": {
+          "type": "number",
+          "minimum": 1,
+          "default": 20
+        },
+        "auto_fold_dirs": {
+          "type": "boolean",
+          "default": true
+        },
+        "auto_reveal_entries": {
+          "type": "boolean",
+          "default": true
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "collaboration_panel": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "left"
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "chat_panel": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right"
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "notification_panel": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right"
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "outline_panel": {
+      "type": "object",
+      "properties": {
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right"
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 240
+        }
+      },
+      "additionalProperties": false
+    },
+    "assistant": {
+      "type": "object",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": true
+        },
+        "version": {
+          "type": "string",
+          "enum": ["1", "2"],
+          "default": "2"
+        },
+        "default_model": {
+          "type": "object",
+          "properties": {
+            "provider": {
+              "type": "string"
+            },
+            "model": {
+              "type": "string"
+            }
+          },
+          "required": ["provider", "model"],
+          "additionalProperties": false
+        },
+        "button": {
+          "type": "boolean",
+          "default": true
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right"],
+          "default": "right"
+        },
+        "default_width": {
+          "type": "number",
+          "minimum": 50,
+          "default": 320
+        },
+        "default_height": {
+          "type": "number",
+          "minimum": 50,
+          "default": 320
+        }
+      },
+      "additionalProperties": false
+    },
+    "ssh_connections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "host": {
+            "type": "string"
+          },
+          "username": {
+            "type": "string"
+          },
+          "port": {
+            "type": "number",
+            "minimum": 1,
+            "maximum": 65535
+          },
+          "projects": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": ["name", "path"],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": ["host", "username"],
+        "additionalProperties": false
+      },
+      "description": "SSH connection configurations"
+    },
+    "read_ssh_config": {
+      "type": "boolean",
+      "default": true,
+      "description": "Read ~/.ssh/config for SSH connections"
+    },
+    "context_servers": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Context server configurations"
+    },
+    "agent_servers": {
+      "type": "object",
+      "additionalProperties": true,
+      "description": "Agent server configurations"
+    },
+    "debugger": {
+      "type": "object",
+      "properties": {
+        "stepping_granularity": {
+          "type": "string",
+          "enum": ["line", "statement"],
+          "default": "line"
+        },
+        "save_breakpoints": {
+          "type": "boolean",
+          "default": true
+        },
+        "timeout": {
+          "type": "number",
+          "minimum": 100,
+          "default": 2000
+        },
+        "dock": {
+          "type": "string",
+          "enum": ["left", "right", "bottom"],
+          "default": "bottom"
+        },
+        "log_dap_communications": {
+          "type": "boolean",
+          "default": true
+        },
+        "format_dap_log_messages": {
+          "type": "boolean",
+          "default": true
+        },
+        "button": {
+          "type": "boolean",
+          "default": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "profiles": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true
+      },
+      "description": "Settings profiles for temporary configuration overlays"
+    },
+    "log": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": ["trace", "debug", "info", "warn", "error"]
+      },
+      "description": "Log level configuration by scope"
+    }
+  },
+  "additionalProperties": false
+}

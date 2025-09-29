@@ -1,0 +1,27 @@
+export {
+	WIDGET_REGISTRY,
+	selectWidget,
+	getFieldLabel,
+	getFieldPlaceholder,
+	isWidgetCompatible,
+	getCompatibleWidgets,
+	type WidgetConfig,
+	type WidgetSelectionOptions,
+	// Re-export shadcn components
+	Button,
+	Input,
+	Label,
+	Switch,
+	Textarea,
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+	Card,
+	CardContent,
+	CardDescription,
+	CardHeader,
+	CardTitle,
+	Badge
+} from './widgets.js';

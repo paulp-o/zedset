@@ -1,0 +1,712 @@
+{
+  "version": "1.0.0",
+  "description": "UI metadata and grouping configuration for Zed Settings Editor",
+  "groups": {
+    "appearance": {
+      "title": "Appearance",
+      "description": "Visual theme and icon settings",
+      "order": 1,
+      "paths": [
+        "theme",
+        "icon_theme"
+      ]
+    },
+    "editor": {
+      "title": "Editor",
+      "description": "Text editing behavior and display settings",
+      "order": 2,
+      "paths": [
+        "base_keymap",
+        "vim_mode",
+        "relative_line_numbers",
+        "cursor_blink",
+        "seed_search_query_from_cursor",
+        "use_on_type_format",
+        "formatter",
+        "format_on_save",
+        "code_actions_on_format",
+        "remove_trailing_whitespace_on_save",
+        "ensure_final_newline_on_save"
+      ]
+    },
+    "fonts": {
+      "title": "Fonts & Typography",
+      "description": "Font settings for editor and UI",
+      "order": 3,
+      "paths": [
+        "buffer_font_family",
+        "buffer_font_fallbacks",
+        "buffer_font_features",
+        "buffer_font_size",
+        "buffer_font_weight",
+        "buffer_line_height",
+        "ui_font_family",
+        "ui_font_size",
+        "ui_font_weight"
+      ]
+    },
+    "formatting": {
+      "title": "Text Formatting",
+      "description": "Indentation, wrapping, and whitespace settings",
+      "order": 4,
+      "paths": [
+        "tab_size",
+        "hard_tabs",
+        "soft_wrap",
+        "preferred_line_length",
+        "show_whitespaces",
+        "wrap_guides"
+      ]
+    },
+    "ui_elements": {
+      "title": "UI Elements",
+      "description": "Interface components and visual aids",
+      "order": 5,
+      "paths": [
+        "scrollbar",
+        "gutter",
+        "indent_guides",
+        "hover_popover_enabled",
+        "inlay_hints"
+      ]
+    },
+    "search": {
+      "title": "Search & Find",
+      "description": "Search behavior and options",
+      "order": 6,
+      "paths": [
+        "search"
+      ]
+    },
+    "terminal": {
+      "title": "Terminal",
+      "description": "Integrated terminal configuration",
+      "order": 7,
+      "paths": [
+        "terminal"
+      ]
+    },
+    "panels": {
+      "title": "Panels & Docks",
+      "description": "Side panel and dock configurations",
+      "order": 8,
+      "paths": [
+        "project_panel",
+        "collaboration_panel",
+        "chat_panel",
+        "notification_panel",
+        "outline_panel"
+      ]
+    },
+    "assistant": {
+      "title": "AI Assistant",
+      "description": "AI assistant and copilot settings",
+      "order": 9,
+      "paths": [
+        "assistant",
+        "features"
+      ]
+    },
+    "development": {
+      "title": "Development Tools",
+      "description": "Debugging and development utilities",
+      "order": 10,
+      "paths": [
+        "debugger"
+      ]
+    },
+    "remote": {
+      "title": "Remote Development",
+      "description": "SSH connections and remote development",
+      "order": 11,
+      "paths": [
+        "ssh_connections",
+        "read_ssh_config",
+        "context_servers",
+        "agent_servers"
+      ]
+    },
+    "system": {
+      "title": "System & Updates",
+      "description": "Application behavior and system integration",
+      "order": 12,
+      "paths": [
+        "auto_update",
+        "telemetry",
+        "profiles",
+        "log"
+      ]
+    },
+    "project": {
+      "title": "Project Settings",
+      "description": "Project-specific configuration",
+      "order": 13,
+      "paths": [
+        "project_name"
+      ]
+    }
+  },
+  "widgets": {
+    "theme.mode": {
+      "type": "select",
+      "options": [
+        {"value": "system", "label": "System"},
+        {"value": "light", "label": "Light"},
+        {"value": "dark", "label": "Dark"}
+      ]
+    },
+    "base_keymap": {
+      "type": "select",
+      "options": [
+        {"value": "VSCode", "label": "VSCode"},
+        {"value": "Atom", "label": "Atom"},
+        {"value": "JetBrains", "label": "JetBrains"},
+        {"value": "None", "label": "None"},
+        {"value": "SublimeText", "label": "Sublime Text"},
+        {"value": "TextMate", "label": "TextMate"}
+      ]
+    },
+    "features.edit_prediction_provider": {
+      "type": "select",
+      "options": [
+        {"value": "zed", "label": "Zed"},
+        {"value": "none", "label": "None"}
+      ]
+    },
+    "buffer_font_size": {
+      "type": "number",
+      "min": 6,
+      "max": 100,
+      "step": 1
+    },
+    "buffer_font_weight": {
+      "type": "select",
+      "options": [
+        {"value": 100, "label": "Thin (100)"},
+        {"value": 200, "label": "Extra Light (200)"},
+        {"value": 300, "label": "Light (300)"},
+        {"value": 400, "label": "Regular (400)"},
+        {"value": 500, "label": "Medium (500)"},
+        {"value": 600, "label": "Semi Bold (600)"},
+        {"value": 700, "label": "Bold (700)"},
+        {"value": 800, "label": "Extra Bold (800)"},
+        {"value": 900, "label": "Black (900)"}
+      ]
+    },
+    "buffer_line_height": {
+      "type": "select_or_number",
+      "options": [
+        {"value": "comfortable", "label": "Comfortable"},
+        {"value": "standard", "label": "Standard"}
+      ],
+      "number_config": {
+        "min": 1.0,
+        "max": 3.0,
+        "step": 0.1
+      }
+    },
+    "ui_font_size": {
+      "type": "number",
+      "min": 8,
+      "max": 50,
+      "step": 1
+    },
+    "ui_font_weight": {
+      "type": "select",
+      "options": [
+        {"value": 100, "label": "Thin (100)"},
+        {"value": 200, "label": "Extra Light (200)"},
+        {"value": 300, "label": "Light (300)"},
+        {"value": 400, "label": "Regular (400)"},
+        {"value": 500, "label": "Medium (500)"},
+        {"value": 600, "label": "Semi Bold (600)"},
+        {"value": 700, "label": "Bold (700)"},
+        {"value": 800, "label": "Extra Bold (800)"},
+        {"value": 900, "label": "Black (900)"}
+      ]
+    },
+    "cursor_blink": {
+      "type": "switch"
+    },
+    "vim_mode": {
+      "type": "switch"
+    },
+    "relative_line_numbers": {
+      "type": "switch"
+    },
+    "use_on_type_format": {
+      "type": "switch"
+    },
+    "format_on_save": {
+      "type": "select_or_boolean",
+      "options": [
+        {"value": "on", "label": "On"},
+        {"value": "off", "label": "Off"}
+      ]
+    },
+    "remove_trailing_whitespace_on_save": {
+      "type": "switch"
+    },
+    "ensure_final_newline_on_save": {
+      "type": "switch"
+    },
+    "tab_size": {
+      "type": "number",
+      "min": 1,
+      "max": 32,
+      "step": 1
+    },
+    "hard_tabs": {
+      "type": "switch"
+    },
+    "soft_wrap": {
+      "type": "select_or_number",
+      "options": [
+        {"value": "none", "label": "None"},
+        {"value": "editor_width", "label": "Editor Width"},
+        {"value": "preferred_line_length", "label": "Preferred Line Length"}
+      ],
+      "number_config": {
+        "min": 1,
+        "step": 1
+      }
+    },
+    "preferred_line_length": {
+      "type": "number",
+      "min": 1,
+      "max": 1000,
+      "step": 1
+    },
+    "show_whitespaces": {
+      "type": "select_or_object",
+      "options": [
+        {"value": "none", "label": "None"},
+        {"value": "all", "label": "All"},
+        {"value": "selection", "label": "Selection"}
+      ]
+    },
+    "scrollbar.show": {
+      "type": "select",
+      "options": [
+        {"value": "auto", "label": "Auto"},
+        {"value": "system", "label": "System"},
+        {"value": "always", "label": "Always"},
+        {"value": "never", "label": "Never"}
+      ]
+    },
+    "scrollbar.cursors": {
+      "type": "switch"
+    },
+    "scrollbar.git_diff": {
+      "type": "switch"
+    },
+    "scrollbar.search_results": {
+      "type": "switch"
+    },
+    "scrollbar.selected_symbol": {
+      "type": "switch"
+    },
+    "scrollbar.diagnostics": {
+      "type": "switch"
+    },
+    "gutter.line_numbers": {
+      "type": "switch"
+    },
+    "gutter.code_actions": {
+      "type": "switch"
+    },
+    "gutter.runnables": {
+      "type": "switch"
+    },
+    "gutter.folds": {
+      "type": "switch"
+    },
+    "indent_guides.enabled": {
+      "type": "switch"
+    },
+    "indent_guides.line_width": {
+      "type": "number",
+      "min": 1,
+      "step": 1
+    },
+    "indent_guides.active_line_width": {
+      "type": "number",
+      "min": 1,
+      "step": 1
+    },
+    "indent_guides.coloring": {
+      "type": "select",
+      "options": [
+        {"value": "disabled", "label": "Disabled"},
+        {"value": "fixed", "label": "Fixed"},
+        {"value": "indent_aware", "label": "Indent Aware"}
+      ]
+    },
+    "hover_popover_enabled": {
+      "type": "switch"
+    },
+    "inlay_hints.enabled": {
+      "type": "switch"
+    },
+    "inlay_hints.show_type_hints": {
+      "type": "switch"
+    },
+    "inlay_hints.show_parameter_hints": {
+      "type": "switch"
+    },
+    "inlay_hints.show_other_hints": {
+      "type": "switch"
+    },
+    "inlay_hints.edit_debounce_ms": {
+      "type": "number",
+      "min": 0,
+      "step": 50
+    },
+    "inlay_hints.scroll_debounce_ms": {
+      "type": "number",
+      "min": 0,
+      "step": 10
+    },
+    "seed_search_query_from_cursor": {
+      "type": "select",
+      "options": [
+        {"value": "always", "label": "Always"},
+        {"value": "never", "label": "Never"},
+        {"value": "selection", "label": "Selection"}
+      ]
+    },
+    "search.whole_word": {
+      "type": "switch"
+    },
+    "search.case_sensitive": {
+      "type": "switch"
+    },
+    "search.include_ignored": {
+      "type": "switch"
+    },
+    "search.wrap": {
+      "type": "switch"
+    },
+    "search.regex": {
+      "type": "switch"
+    },
+    "terminal.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"},
+        {"value": "bottom", "label": "Bottom"}
+      ]
+    },
+    "terminal.alternate_scroll": {
+      "type": "select",
+      "options": [
+        {"value": "off", "label": "Off"},
+        {"value": "on", "label": "On"}
+      ]
+    },
+    "terminal.blinking": {
+      "type": "select",
+      "options": [
+        {"value": "off", "label": "Off"},
+        {"value": "terminal_controlled", "label": "Terminal Controlled"},
+        {"value": "on", "label": "On"}
+      ]
+    },
+    "terminal.copy_on_select": {
+      "type": "switch"
+    },
+    "terminal.font_size": {
+      "type": "number",
+      "min": 6,
+      "step": 1
+    },
+    "terminal.font_weight": {
+      "type": "select",
+      "options": [
+        {"value": 100, "label": "Thin (100)"},
+        {"value": 200, "label": "Extra Light (200)"},
+        {"value": 300, "label": "Light (300)"},
+        {"value": 400, "label": "Regular (400)"},
+        {"value": 500, "label": "Medium (500)"},
+        {"value": 600, "label": "Semi Bold (600)"},
+        {"value": 700, "label": "Bold (700)"},
+        {"value": 800, "label": "Extra Bold (800)"},
+        {"value": 900, "label": "Black (900)"}
+      ]
+    },
+    "terminal.line_height": {
+      "type": "select_or_number",
+      "options": [
+        {"value": "comfortable", "label": "Comfortable"},
+        {"value": "standard", "label": "Standard"}
+      ],
+      "number_config": {
+        "min": 1.0,
+        "step": 0.1
+      }
+    },
+    "terminal.option_as_meta": {
+      "type": "switch"
+    },
+    "terminal.button": {
+      "type": "switch"
+    },
+    "terminal.toolbar.title": {
+      "type": "switch"
+    },
+    "terminal.working_directory": {
+      "type": "select",
+      "options": [
+        {"value": "current_project_directory", "label": "Current Project Directory"},
+        {"value": "first_project_directory", "label": "First Project Directory"}
+      ]
+    },
+    "project_panel.button": {
+      "type": "switch"
+    },
+    "project_panel.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "project_panel.file_icons": {
+      "type": "switch"
+    },
+    "project_panel.folder_icons": {
+      "type": "switch"
+    },
+    "project_panel.git_status": {
+      "type": "switch"
+    },
+    "project_panel.indent_size": {
+      "type": "number",
+      "min": 1,
+      "step": 1
+    },
+    "project_panel.auto_fold_dirs": {
+      "type": "switch"
+    },
+    "project_panel.auto_reveal_entries": {
+      "type": "switch"
+    },
+    "project_panel.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "collaboration_panel.button": {
+      "type": "switch"
+    },
+    "collaboration_panel.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "collaboration_panel.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "chat_panel.button": {
+      "type": "switch"
+    },
+    "chat_panel.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "chat_panel.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "notification_panel.button": {
+      "type": "switch"
+    },
+    "notification_panel.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "notification_panel.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "outline_panel.button": {
+      "type": "switch"
+    },
+    "outline_panel.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "outline_panel.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "assistant.enabled": {
+      "type": "switch"
+    },
+    "assistant.version": {
+      "type": "select",
+      "options": [
+        {"value": "1", "label": "Version 1"},
+        {"value": "2", "label": "Version 2"}
+      ]
+    },
+    "assistant.button": {
+      "type": "switch"
+    },
+    "assistant.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"}
+      ]
+    },
+    "assistant.default_width": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "assistant.default_height": {
+      "type": "number",
+      "min": 50,
+      "step": 10
+    },
+    "debugger.stepping_granularity": {
+      "type": "select",
+      "options": [
+        {"value": "line", "label": "Line"},
+        {"value": "statement", "label": "Statement"}
+      ]
+    },
+    "debugger.save_breakpoints": {
+      "type": "switch"
+    },
+    "debugger.timeout": {
+      "type": "number",
+      "min": 100,
+      "step": 100
+    },
+    "debugger.dock": {
+      "type": "select",
+      "options": [
+        {"value": "left", "label": "Left"},
+        {"value": "right", "label": "Right"},
+        {"value": "bottom", "label": "Bottom"}
+      ]
+    },
+    "debugger.log_dap_communications": {
+      "type": "switch"
+    },
+    "debugger.format_dap_log_messages": {
+      "type": "switch"
+    },
+    "debugger.button": {
+      "type": "switch"
+    },
+    "read_ssh_config": {
+      "type": "switch"
+    },
+    "auto_update": {
+      "type": "switch"
+    },
+    "telemetry.diagnostics": {
+      "type": "switch"
+    },
+    "telemetry.metrics": {
+      "type": "switch"
+    }
+  },
+  "labels": {
+    "theme.mode": "Theme Mode",
+    "theme.light": "Light Theme",
+    "theme.dark": "Dark Theme",
+    "features.edit_prediction_provider": "Edit Prediction Provider",
+    "buffer_font_family": "Buffer Font Family",
+    "buffer_font_fallbacks": "Buffer Font Fallbacks",
+    "buffer_font_features": "Buffer Font Features",
+    "buffer_font_size": "Buffer Font Size",
+    "buffer_font_weight": "Buffer Font Weight",
+    "buffer_line_height": "Buffer Line Height",
+    "ui_font_family": "UI Font Family",
+    "ui_font_size": "UI Font Size",
+    "ui_font_weight": "UI Font Weight",
+    "scrollbar.show": "Show Scrollbar",
+    "scrollbar.cursors": "Show Cursors",
+    "scrollbar.git_diff": "Show Git Diff",
+    "scrollbar.search_results": "Show Search Results",
+    "scrollbar.selected_symbol": "Show Selected Symbol",
+    "scrollbar.diagnostics": "Show Diagnostics",
+    "gutter.line_numbers": "Line Numbers",
+    "gutter.code_actions": "Code Actions",
+    "gutter.runnables": "Runnables",
+    "gutter.folds": "Code Folding",
+    "indent_guides.enabled": "Enabled",
+    "indent_guides.line_width": "Line Width",
+    "indent_guides.active_line_width": "Active Line Width",
+    "indent_guides.coloring": "Coloring",
+    "inlay_hints.enabled": "Enabled",
+    "inlay_hints.show_type_hints": "Show Type Hints",
+    "inlay_hints.show_parameter_hints": "Show Parameter Hints",
+    "inlay_hints.show_other_hints": "Show Other Hints",
+    "inlay_hints.edit_debounce_ms": "Edit Debounce (ms)",
+    "inlay_hints.scroll_debounce_ms": "Scroll Debounce (ms)",
+    "search.whole_word": "Whole Word",
+    "search.case_sensitive": "Case Sensitive",
+    "search.include_ignored": "Include Ignored",
+    "search.wrap": "Wrap Around",
+    "search.regex": "Regular Expressions",
+    "terminal.alternate_scroll": "Alternate Scroll",
+    "terminal.blinking": "Cursor Blinking",
+    "terminal.copy_on_select": "Copy on Select",
+    "terminal.dock": "Dock Position",
+    "terminal.font_family": "Font Family",
+    "terminal.font_features": "Font Features",
+    "terminal.font_size": "Font Size",
+    "terminal.font_weight": "Font Weight",
+    "terminal.line_height": "Line Height",
+    "terminal.option_as_meta": "Option as Meta",
+    "terminal.button": "Show Button",
+    "terminal.toolbar.title": "Show Title",
+    "terminal.working_directory": "Working Directory",
+    "project_panel.button": "Show Button",
+    "project_panel.dock": "Dock Position",
+    "project_panel.file_icons": "File Icons",
+    "project_panel.folder_icons": "Folder Icons",
+    "project_panel.git_status": "Git Status",
+    "project_panel.indent_size": "Indent Size",
+    "project_panel.auto_fold_dirs": "Auto Fold Directories",
+    "project_panel.auto_reveal_entries": "Auto Reveal Entries",
+    "project_panel.default_width": "Default Width",
+    "assistant.enabled": "Enabled",
+    "assistant.version": "Version",
+    "assistant.button": "Show Button",
+    "assistant.dock": "Dock Position",
+    "assistant.default_width": "Default Width",
+    "assistant.default_height": "Default Height",
+    "debugger.stepping_granularity": "Stepping Granularity",
+    "debugger.save_breakpoints": "Save Breakpoints",
+    "debugger.timeout": "Timeout (ms)",
+    "debugger.dock": "Dock Position",
+    "debugger.log_dap_communications": "Log DAP Communications",
+    "debugger.format_dap_log_messages": "Format DAP Log Messages",
+    "debugger.button": "Show Button",
+    "telemetry.diagnostics": "Diagnostics",
+    "telemetry.metrics": "Metrics"
+  }
+}
