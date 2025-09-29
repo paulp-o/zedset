@@ -259,7 +259,90 @@ function extractDocumentation(jsonc: string, tree: Node): DocsMap {
 		}
 	}
 
+	// Extract comments inside empty objects and associate them with the object itself
+	extractEmptyObjectComments(lines, docs);
+
 	return docs;
+}
+
+/**
+ * Extracts comments inside empty objects and associates them with the object
+ */
+function extractEmptyObjectComments(lines: string[], docs: DocsMap): void {
+	for (let i = 0; i < lines.length; i++) {
+		const line = lines[i];
+
+		// Look for object property definitions like: "property_name": {
+		const objectMatch = line.match(/^\s*"([^"]+)"\s*:\s*\{/);
+		if (objectMatch) {
+			const propertyName = objectMatch[1];
+			const fullPath = determinePropertyPath(lines, i) || propertyName;
+
+			// Find the matching closing brace for this object
+			const openingIndent = line.match(/^(\s*)/)?.[1].length || 0;
+			let closingBraceIndex = -1;
+
+			// Look for closing brace - could be on the same line or later lines
+			if (line.includes('}')) {
+				// Check if it's a single-line empty object like: "prop": {}
+				if (line.match(/^\s*"[^"]+"\s*:\s*\{\s*\}/)) {
+					closingBraceIndex = i;
+				}
+			} else {
+				// Multi-line object, find matching closing brace
+				for (let j = i + 1; j < lines.length; j++) {
+					const checkLine = lines[j];
+					const checkIndent = checkLine.match(/^(\s*)/)?.[1].length || 0;
+
+					// Found closing brace at same or lesser indentation level
+					const trimmedLine = checkLine.trim();
+					if (checkIndent <= openingIndent && (trimmedLine === '}' || trimmedLine === '},')) {
+						closingBraceIndex = j;
+						break;
+					}
+				}
+			}
+
+			if (closingBraceIndex > -1) {
+				// Check if this object is empty (only contains comments)
+				let hasActualProperties = false;
+				const innerComments: string[] = [];
+
+				for (let k = i + 1; k < closingBraceIndex; k++) {
+					const innerLine = lines[k];
+
+					// Check for actual property definitions (not commented out)
+					if (innerLine.match(/^\s*"[^"]+"\s*:/)) {
+						hasActualProperties = true;
+					}
+
+					// Collect ALL comment lines inside the object (preserve full line content)
+					const commentMatch = innerLine.match(/^\s*\/\/(.*)$/);
+					if (commentMatch) {
+						// Keep the full comment line including the "//" prefix and original spacing
+						const fullCommentLine = innerLine.trim();
+						if (fullCommentLine) {
+							innerComments.push(fullCommentLine);
+						}
+					}
+				}
+
+
+				// If the object has no actual properties but has comments, add them to docs
+				if (!hasActualProperties && innerComments.length > 0) {
+					const existingDoc = docs[fullPath] || '';
+					const innerCommentText = innerComments.join('\n');
+
+					// Combine existing documentation with inner comments
+					if (existingDoc) {
+						docs[fullPath] = `${existingDoc}\n\n${innerCommentText}`;
+					} else {
+						docs[fullPath] = innerCommentText;
+					}
+				}
+			}
+		}
+	}
 }
 
 /**
@@ -322,6 +405,7 @@ export async function loadDefaultSettings(): Promise<JsoncParseResult> {
 		};
 	}
 }
+
 
 /**
  * Convenience function to fetch and parse live default settings from GitHub

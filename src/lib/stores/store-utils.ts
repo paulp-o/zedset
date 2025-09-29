@@ -4,24 +4,45 @@ import type { SettingsObject } from '$lib/types/index.js';
  * Utility functions for store operations
  */
 
+// Memoization cache for getAllPaths
+const pathsCache = new WeakMap<SettingsObject, Map<string, string[]>>();
+
 /**
- * Get all field paths from a settings object
+ * Get all field paths from a settings object (memoized)
  */
 export function getAllPaths(obj: SettingsObject, prefix = ''): string[] {
+	// Check cache first
+	if (!pathsCache.has(obj)) {
+		pathsCache.set(obj, new Map());
+	}
+
+	const objCache = pathsCache.get(obj)!;
+	if (objCache.has(prefix)) {
+		return objCache.get(prefix)!;
+	}
 	const paths: string[] = [];
 
 	for (const [key, value] of Object.entries(obj)) {
 		const currentPath = prefix ? `${prefix}.${key}` : key;
 
 		if (value && typeof value === 'object' && !Array.isArray(value)) {
-			// Recurse into nested objects
-			paths.push(...getAllPaths(value as SettingsObject, currentPath));
+			// For objects, only recurse to get nested paths - never include the object itself
+			const nestedPaths = getAllPaths(value as SettingsObject, currentPath);
+			if (nestedPaths.length > 0) {
+				// Has children - only include the children, never the parent
+				paths.push(...nestedPaths);
+			} else {
+				// Empty object with no children - this is atomic, include it
+				paths.push(currentPath);
+			}
 		} else {
-			// Leaf value
+			// Atomic value (string, number, boolean, array, null)
 			paths.push(currentPath);
 		}
 	}
 
+	// Cache the result before returning
+	objCache.set(prefix, paths);
 	return paths;
 }
 

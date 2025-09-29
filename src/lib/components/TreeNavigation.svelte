@@ -8,6 +8,7 @@
 
 	interface Props {
 		groups: Record<string, string[]>;
+		customPaths?: Set<string>;
 		activeSection?: string;
 		onSectionClick?: (sectionId: string) => void;
 		onHighlight?: (elementId: string | null) => void;
@@ -17,6 +18,7 @@
 
 	let {
 		groups,
+		customPaths = new Set(),
 		activeSection = '',
 		onSectionClick,
 		onHighlight,
@@ -273,7 +275,9 @@
 	function formatFieldName(path: string): string {
 		const parts = path.split('.');
 		const fieldName = parts[parts.length - 1];
-		return fieldName.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+		const formatted = fieldName.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
+		const star = customPaths.has(path) ? '<span class="text-orange-500 ml-1">*</span>' : '';
+		return formatted + star;
 	}
 
 	// Search highlight helpers
@@ -284,9 +288,13 @@
 	}
 
 	function highlightedFieldLabel(path: string): string {
-		const label = formatFieldName(path);
+		const parts = path.split('.');
+		const fieldName = parts[parts.length - 1];
+		const formatted = fieldName.replace(/[_-]/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase());
 		const q = (uiStore as any).searchQuery;
-		return q && q.length >= 2 ? highlightText(label, q) : label;
+		const highlighted = q && q.length >= 2 ? highlightText(formatted, q) : formatted;
+		const star = customPaths.has(path) ? '<span class="text-orange-500 ml-1">*</span>' : '';
+		return highlighted + star;
 	}
 
 	// Count deeply nested children for a level 2 path

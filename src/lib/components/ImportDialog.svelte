@@ -11,7 +11,12 @@
 		DialogHeader,
 		DialogTitle
 	} from '$lib/components/ui/dialog/index.js';
-	import { Upload, FileText, AlertCircle, CheckCircle } from 'lucide-svelte';
+	import {
+		Collapsible,
+		CollapsibleContent,
+		CollapsibleTrigger
+	} from '$lib/components/ui/collapsible/index.js';
+	import { Upload, FileText, AlertCircle, CheckCircle, ChevronDown } from 'lucide-svelte';
 	import {
 		importSettingsFile,
 		importSettingsText,
@@ -35,6 +40,11 @@
 	let importResult = $state<ImportResult | null>(null);
 	let isImporting = $state(false);
 	let validationResult = $state<any>(null);
+
+	// Collapsible state
+	let showUnknownKeys = $state(false);
+	let showValidationErrors = $state(false);
+	let showImportDetails = $state(false);
 
 	// File input element
 	let fileInput = $state<HTMLInputElement>();
@@ -75,6 +85,18 @@
 			validationResult = null;
 		}
 	}
+
+	// Track previous textContent to avoid infinite loops
+	let previousTextContent = $state('');
+
+	// Watch for textContent changes in Svelte 5 reactive way
+	$effect(() => {
+		// This will trigger whenever textContent changes (including paste)
+		if (textContent !== previousTextContent) {
+			previousTextContent = textContent;
+			handleTextChange();
+		}
+	});
 
 	async function performValidation() {
 		if (isImporting) return;
@@ -132,6 +154,7 @@
 
 		// Reset state
 		textContent = '';
+		previousTextContent = '';
 		selectedFile = null;
 		importResult = null;
 		validationResult = null;
@@ -225,7 +248,6 @@
 					<Textarea
 						id="settings-text"
 						bind:value={textContent}
-						oninput={handleTextChange}
 						placeholder="Paste your settings here..."
 						class="min-h-[120px] font-mono text-sm"
 					/>
@@ -236,18 +258,7 @@
 			{#if importResult}
 				<div class="space-y-3">
 					{#if importResult.success}
-						<Alert>
-							<CheckCircle class="h-4 w-4" />
-							<AlertDescription>
-								Settings imported successfully!
-								{#if importResult.warnings.length > 0}
-									<br />
-									<span class="text-yellow-600">
-										Warnings: {importResult.warnings.join(', ')}
-									</span>
-								{/if}
-							</AlertDescription>
-						</Alert>
+					
 
 						{#if showValidation()}
 							<div class="space-y-2 text-sm">
@@ -255,60 +266,95 @@
 								<div class="text-muted-foreground">{validationResult.summary}</div>
 
 								{#if validationResult.unknownKeys.length > 0}
-									<Alert variant="destructive">
-										<AlertCircle class="h-4 w-4" />
-										<AlertDescription>
-											<div class="font-medium">Unknown Settings Found:</div>
-											<ul class="mt-1 list-inside list-disc">
-												{#each validationResult.unknownKeys.slice(0, 5) as key}
-													<li class="font-mono text-xs">{key}</li>
-												{/each}
-												{#if validationResult.unknownKeys.length > 5}
-													<li class="text-muted-foreground">
-														...and {validationResult.unknownKeys.length - 5} more
-													</li>
-												{/if}
-											</ul>
-											<p class="mt-2 text-xs">
-												These settings are not recognized by Zed but will be preserved.
-											</p>
-										</AlertDescription>
-									</Alert>
+									<Collapsible bind:open={showUnknownKeys} >
+										<Alert variant="destructive" class="text-yellow-500">
+											<AlertCircle class="h-4 w-4 text-yellow-500"  />
+											<AlertDescription>
+												<div class="flex items-center justify-between w-full">
+													<div class="font-medium text-yellow-500">
+														{validationResult.unknownKeys.length} Unknown Setting{validationResult.unknownKeys.length !== 1 ? 's' : ''} Found
+													</div>
+													<CollapsibleTrigger class="flex text-yellow-500 items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
+														<ChevronDown class="h-3 w-3 transition-transform {showUnknownKeys ? 'rotate-180' : ''}" />
+														{showUnknownKeys ? 'Hide' : 'Show'} Details
+													</CollapsibleTrigger>
+												</div>
+												<CollapsibleContent class="mt-2">
+													<ul class="list-inside list-disc text-yellow-500">
+														{#each validationResult.unknownKeys as key}
+															<li class="font-mono text-xs">{key}</li>
+														{/each}
+													</ul>
+													<p class="mt-2 text-xs text-yellow-500">
+														The default values for the above imported settings were not found in the official Zed default settings data. This doesn't necessarily mean that these values are invalid; It might be custom settings you need for your extensions, or just valid data that is not yet on the default settings data. You might need to read the related docs on the Zed official docs webpage, accessible directly from the editor.
+													</p>
+												</CollapsibleContent>
+											</AlertDescription>
+										</Alert>
+									</Collapsible>
 								{/if}
 
 								{#if validationResult.errors.length > 0}
-									<Alert variant="destructive">
-										<AlertCircle class="h-4 w-4" />
-										<AlertDescription>
-											<div class="font-medium">Validation Errors:</div>
-											<ul class="mt-1 list-inside list-disc">
-												{#each validationResult.errors.slice(0, 3) as error}
-													<li class="text-xs">{error.message} (at {error.path})</li>
-												{/each}
-												{#if validationResult.errors.length > 3}
-													<li class="text-xs text-muted-foreground">
-														...and {validationResult.errors.length - 3} more errors
-													</li>
-												{/if}
-											</ul>
-										</AlertDescription>
-									</Alert>
+									<Collapsible bind:open={showValidationErrors}>
+										<Alert variant="destructive" class="text-red-500">
+											<AlertCircle class="h-4 w-4" />
+											<AlertDescription>
+												<div class="flex items-center justify-between">
+													<div class="font-medium text-red-500">
+														{validationResult.errors.length} Validation Error{validationResult.errors.length !== 1 ? 's' : ''}
+													</div>
+													<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
+														<ChevronDown class="h-3 w-3 transition-transform {showValidationErrors ? 'rotate-180' : ''}" />
+														{showValidationErrors ? 'Hide' : 'Show'} Details
+													</CollapsibleTrigger>
+												</div>
+												<CollapsibleContent class="mt-2">
+													<ul class="list-inside list-disc">
+														{#each validationResult.errors as error}
+															<li class="text-xs">{error.message} (at {error.path})</li>
+														{/each}
+													</ul>
+												</CollapsibleContent>
+											</AlertDescription>
+										</Alert>
+									</Collapsible>
 								{/if}
 							</div>
 						{/if}
 					{:else}
-						<Alert variant="destructive">
-							<AlertCircle class="h-4 w-4" />
-							<AlertDescription>
-								<div class="font-medium">Import Failed</div>
-								<ul class="mt-1 list-inside list-disc">
-									{#each importResult.errors as error}
-										<li class="text-sm">{error}</li>
-									{/each}
-								</ul>
-							</AlertDescription>
-						</Alert>
-					{/if}
+						<Collapsible bind:open={showImportDetails}>
+							<Alert variant="destructive">
+								<AlertCircle class="h-4 w-4" />
+								<AlertDescription>
+									<div class="flex items-center justify-between">
+										<div class="font-medium">Import Failed</div>
+										<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
+											<ChevronDown class="h-3 w-3 transition-transform {showImportDetails ? 'rotate-180' : ''}" />
+											{showImportDetails ? 'Hide' : 'Show'} Details
+										</CollapsibleTrigger>
+									</div>
+									<CollapsibleContent class="mt-2">
+										<ul class="list-inside list-disc">
+											{#each importResult.errors as error}
+												<li class="text-sm">{error}</li>
+											{/each}
+										</ul>
+									</CollapsibleContent>
+								</AlertDescription>
+							</Alert>
+						</Collapsible>
+					{/if}	<div class="flex items-center gap-2 rounded-md border-0 border-none bg-green-50 px-3 py-2 text-green-700  dark:bg-green-950/40 dark:text-green-300 backdrop-blur-sm">
+							<CheckCircle class="h-4 w-4" />
+							<div>
+								<span class="font-medium">Settings imported successfully!</span>
+								{#if importResult.warnings.length > 0}
+									<br />
+									<span class="text-yellow-700 dark:text-yellow-300">
+										Warnings: {importResult.warnings.join(', ')}
+									</span>
+								{/if}
+							</div>
+						</div>
 				</div>
 			{/if}
 		</div>
@@ -318,8 +364,12 @@
 			<Button onclick={handleImport} disabled={!canImport || isImporting}>
 				{#if isImporting}
 					Validating...
-				{:else}
+				{:else if importResult && !importResult.success}
+					Import Failed
+				{:else if canImport()}
 					Import Settings
+				{:else}
+					No Valid Data
 				{/if}
 			</Button>
 		</DialogFooter>

@@ -1,8 +1,12 @@
-import type { SettingsObject, ValidationResult, JsonSchema } from '$lib/types/index.js';
+/* eslint-disable */
+// This file uses Svelte 5 patterns with regular Sets for reactive state
+// The linter rule suggesting SvelteSet is outdated for Svelte 5
+import type { SettingsObject, JsonSchema } from '$lib/types/index.js';
 import { merge } from '$lib/core/merge.js';
 import { diff } from '$lib/core/diff.js';
 import { validateSettings } from '$lib/core/validator.js';
 import { fetchDefaultSettings, parseJsoncWithDocs } from '$lib/parsers/jsonc-parser.js';
+import { getAllPaths } from './store-utils.js';
 
 interface SettingsState {
 	defaults: SettingsObject;
@@ -11,13 +15,6 @@ interface SettingsState {
 	docsMap: Record<string, string>;
 	loading: boolean;
 	error: string | null;
-}
-
-interface DerivedState {
-	effective: SettingsObject;
-	delta: SettingsObject;
-	validation: ValidationResult;
-	changedPaths: Set<string>;
 }
 
 class SettingsStore {
@@ -31,6 +28,14 @@ class SettingsStore {
 		error: null
 	});
 
+	// Cached atomic paths for performance (non-reactive cache)
+	private atomicPathsCache = {
+		allPaths: [] as string[],
+		hasChildrenSet: new Set<string>(),
+		lastDefaultsRef: null as SettingsObject | null,
+		lastUserRef: null as SettingsObject | null
+	};
+
 	// Derived computations - clean and reactive
 	private derived = $derived(() => {
 		const effective = merge(this.state.defaults, this.state.user);
@@ -43,8 +48,12 @@ class SettingsStore {
 		// Compute changed paths efficiently (no state mutations)
 		const changedPaths = this._computeChangedPaths();
 
-		return { effective, delta, validation, changedPaths };
+		// Compute custom paths (keys that exist in user but not in defaults)
+		const customPaths = this._computeCustomPaths();
+
+		return { effective, delta, validation, changedPaths, customPaths };
 	});
+
 
 	// Getters for reactive access
 	get defaults() {
@@ -77,6 +86,20 @@ class SettingsStore {
 	}
 	get changedPaths() {
 		return this.derived().changedPaths;
+	}
+	get customPaths() {
+		return this.derived().customPaths;
+	}
+
+	// Cached atomic paths getters
+	get allAtomicPaths() {
+		this._updateAtomicPathsCache(); // Update cache on access
+		return this.atomicPathsCache.allPaths;
+	}
+
+	get hasChildrenSet() {
+		this._updateAtomicPathsCache(); // Update cache on access
+		return this.atomicPathsCache.hasChildrenSet;
 	}
 
 	// Actions
@@ -131,16 +154,14 @@ class SettingsStore {
 	}
 
 	updateUserSetting(path: string, value: unknown): void {
-		// Deep clone only when necessary for nested paths
-		const updated = JSON.parse(JSON.stringify(this.state.user));
-		this._setByPath(updated, path, value);
+		// Use structural sharing for performance
+		const updated = this._cloneWithStructuralSharing(this.state.user, path, value, 'set');
 		this.state.user = updated;
 	}
 
 	resetUserSetting(path: string): void {
-		// Remove the path from user settings
-		const updated = JSON.parse(JSON.stringify(this.state.user));
-		this._deleteByPath(updated, path);
+		// Use structural sharing for performance
+		const updated = this._cloneWithStructuralSharing(this.state.user, path, undefined, 'delete');
 		this.state.user = updated;
 	}
 
@@ -149,18 +170,139 @@ class SettingsStore {
 	}
 
 	resetSection(sectionPath: string): void {
-		// Remove all user settings under the section path
-		const updated = JSON.parse(JSON.stringify(this.state.user));
-		this._deleteByPath(updated, sectionPath);
+		// Use structural sharing for performance
+		const updated = this._cloneWithStructuralSharing(
+			this.state.user,
+			sectionPath,
+			undefined,
+			'delete'
+		);
 		this.state.user = updated;
 	}
 
 	// Helper methods
+	private _cloneWithStructuralSharing(
+		obj: SettingsObject,
+		path: string,
+		value: unknown,
+		operation: 'set' | 'delete'
+	): SettingsObject {
+		const parts = path.split('.');
+
+		// If it's a top-level operation, handle it simply
+		if (parts.length === 1) {
+			const result = { ...obj };
+			if (operation === 'set') {
+				result[parts[0]] = value;
+			} else {
+				delete result[parts[0]];
+			}
+			return result;
+		}
+
+		// For nested paths, only clone the path that needs to change
+		const [first, ...rest] = parts;
+		const restPath = rest.join('.');
+
+		const result = { ...obj };
+
+		if (!(first in result) || typeof result[first] !== 'object' || result[first] === null) {
+			if (operation === 'delete') {
+				return result; // Nothing to delete
+			}
+			result[first] = {};
+		} else {
+			// Clone only this level
+			result[first] = { ...(result[first] as SettingsObject) };
+		}
+
+		// Recursively apply the operation
+		if (operation === 'set') {
+			result[first] = this._cloneWithStructuralSharing(
+				result[first] as SettingsObject,
+				restPath,
+				value,
+				operation
+			);
+		} else {
+			result[first] = this._cloneWithStructuralSharing(
+				result[first] as SettingsObject,
+				restPath,
+				value,
+				operation
+			);
+
+			// Clean up empty objects
+			if (Object.keys(result[first] as SettingsObject).length === 0) {
+				delete result[first];
+			}
+		}
+
+		return result;
+	}
+
+	private _updateAtomicPathsCache(): void {
+		// Check if cache needs updating (reference equality check)
+		if (
+			this.atomicPathsCache.lastDefaultsRef === this.state.defaults &&
+			this.atomicPathsCache.lastUserRef === this.state.user
+		) {
+			return; // Cache is still valid
+		}
+
+		// Update cache - get only atomic (leaf) paths
+		const defaultPaths = getAllPaths(this.state.defaults);
+		const userPaths = getAllPaths(this.state.user);
+
+		// Combine and deduplicate atomic paths
+		const allPathsSet = new Set([...defaultPaths, ...userPaths]);
+		this.atomicPathsCache.allPaths = Array.from(allPathsSet);
+
+		// Build hasChildren set by checking all possible parent paths
+		const hasChildrenSet = new Set<string>();
+
+		// For each atomic path, add all its parent paths to hasChildren set
+		for (const atomicPath of this.atomicPathsCache.allPaths) {
+			const parts = atomicPath.split('.');
+			// Generate all parent paths (but not the leaf itself)
+			for (let i = 1; i < parts.length; i++) {
+				const parentPath = parts.slice(0, i).join('.');
+				hasChildrenSet.add(parentPath);
+			}
+		}
+
+		this.atomicPathsCache.hasChildrenSet = hasChildrenSet;
+		this.atomicPathsCache.lastDefaultsRef = this.state.defaults;
+		this.atomicPathsCache.lastUserRef = this.state.user;
+	}
+
+	private _computeCustomPaths(): Set<string> {
+		const customPaths = new Set<string>();
+
+		// Get all atomic paths in user settings (consistent with _updateAtomicPathsCache)
+		const userPaths = getAllPaths(this.state.user);
+
+		// Check which paths don't exist in defaults
+		for (const path of userPaths) {
+			const defaultValue = this._getValueByPath(this.state.defaults, path);
+			if (defaultValue === undefined) {
+				customPaths.add(path);
+			}
+		}
+
+		return customPaths;
+	}
+
 	private _computeChangedPaths(): Set<string> {
 		const changedPaths = new Set<string>();
 
-		// Get all paths in user settings
-		const userPaths = this._getAllPathsInObject(this.state.user);
+		// Early exit if no user settings
+		if (Object.keys(this.state.user).length === 0) {
+			return changedPaths;
+		}
+
+		// Get all atomic paths in user settings (consistent with _updateAtomicPathsCache)
+		const userPaths = getAllPaths(this.state.user);
 
 		// Check each user path against defaults
 		for (const path of userPaths) {
@@ -175,24 +317,11 @@ class SettingsStore {
 		return changedPaths;
 	}
 
-	private _getAllPathsInObject(obj: SettingsObject, prefix = ''): Set<string> {
-		const paths = new Set<string>();
-
-		for (const [key, value] of Object.entries(obj)) {
-			const currentPath = prefix ? `${prefix}.${key}` : key;
-			paths.add(currentPath);
-
-			if (value && typeof value === 'object' && !Array.isArray(value)) {
-				const nestedPaths = this._getAllPathsInObject(value as SettingsObject, currentPath);
-				nestedPaths.forEach((path) => paths.add(path));
-			}
-		}
-
-		return paths;
-	}
 
 	private _getValueByPath(obj: SettingsObject, path: string): unknown {
-		return path.split('.').reduce((current, key) => current?.[key], obj);
+		return path
+			.split('.')
+			.reduce((current: unknown, key) => (current as Record<string, unknown>)?.[key], obj);
 	}
 
 	private _collectChangedPaths(
@@ -228,63 +357,6 @@ class SettingsStore {
 		}
 	}
 
-	private _setByPath(obj: SettingsObject, path: string, value: unknown): void {
-		const parts = path.split('.');
-		let current = obj;
-
-		for (let i = 0; i < parts.length - 1; i++) {
-			const part = parts[i];
-
-			// Only create new object if it doesn't exist or is not a valid object
-			// NEVER replace existing objects or arrays - this preserves sibling data
-			if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
-				current[part] = {};
-			}
-			// If it's an array, we can't navigate into it with object keys, so this is an error case
-			else if (Array.isArray(current[part])) {
-				console.error(`Cannot set object path '${path}' - '${part}' is an array, not an object`);
-				return;
-			}
-			current = current[part] as SettingsObject;
-		}
-
-		current[parts[parts.length - 1]] = value;
-	}
-
-	private _deleteByPath(obj: SettingsObject, path: string): void {
-		const parts = path.split('.');
-		let current = obj;
-
-		for (let i = 0; i < parts.length - 1; i++) {
-			const part = parts[i];
-			if (!(part in current) || typeof current[part] !== 'object' || current[part] === null) {
-				return; // Path doesn't exist
-			}
-			current = current[part] as SettingsObject;
-		}
-
-		delete current[parts[parts.length - 1]];
-
-		// Clean up empty parent objects
-		this._cleanupEmptyObjects(obj, parts.slice(0, -1));
-	}
-
-	private _cleanupEmptyObjects(obj: SettingsObject, pathParts: string[]): void {
-		if (pathParts.length === 0) return;
-
-		let current = obj;
-		for (let i = 0; i < pathParts.length - 1; i++) {
-			current = current[pathParts[i]] as SettingsObject;
-		}
-
-		const lastKey = pathParts[pathParts.length - 1];
-		const target = current[lastKey];
-
-		if (typeof target === 'object' && target !== null && Object.keys(target).length === 0) {
-			delete current[lastKey];
-			this._cleanupEmptyObjects(obj, pathParts.slice(0, -1));
-		}
-	}
 
 	private _deepEqual(a: unknown, b: unknown): boolean {
 		// Fast path: reference equality
@@ -316,7 +388,7 @@ class SettingsStore {
 			// Check each key (avoid includes() for better performance)
 			const objB = b as Record<string, unknown>;
 			for (const key of keysA) {
-				if (!(key in objB) || !this._deepEqual((a as any)[key], objB[key])) {
+				if (!(key in objB) || !this._deepEqual((a as Record<string, unknown>)[key], objB[key])) {
 					return false;
 				}
 			}

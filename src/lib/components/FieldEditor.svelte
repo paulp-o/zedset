@@ -8,6 +8,7 @@
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { RotateCcw, Info } from 'lucide-svelte';
 	import { uiStore } from '$lib/stores/ui.svelte.js';
+	import { settingsStore } from '$lib/stores/settings.svelte.js';
 	import { highlightText } from '$lib/utils/highlight.js';
 	import { parseSimpleMarkdown } from '$lib/utils/markdown.js';
 
@@ -16,6 +17,7 @@
 		value: unknown;
 		defaultValue: unknown;
 		changed: boolean;
+		custom?: boolean;
 		description?: string;
 		validation?: any[];
 		hideLabel?: boolean;
@@ -28,6 +30,7 @@
 		value,
 		defaultValue,
 		changed,
+		custom = false,
 		description,
 		validation,
 		hideLabel = false,
@@ -160,9 +163,18 @@
 	function handleCheckboxChange(checked: boolean) {
 		onUpdate(checked);
 	}
+
+
+	// Helper to check if this field has children (optimized with cached data)
+	let hasChildren = $derived(() => {
+		// Use pre-computed hasChildren set for O(1) lookup
+		return settingsStore.hasChildrenSet.has(path);
+	});
+
+
 </script>
 
-<div class="space-y-3 py-4  {changed ? 'bg-orange-50/50 dark:bg-orange-950/50' : ''}">
+<div class="space-y-3 py-4  {changed ? 'bg-orange-100/80 dark:bg-orange-950/50' : ''}">
 	<!-- Header -->
 	<div class="flex items-start justify-between">
 		<div class="space-y-1">
@@ -174,21 +186,33 @@
 					{#if changed}
 						<Badge variant="outline" class="text-xs">Modified</Badge>
 					{/if}
+					{#if custom}
+						<Badge variant="secondary" class="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+							<span class="text-orange-500 mr-1">*</span>Custom
+						</Badge>
+					{/if}
 					{#if isStructuredValue()}
 						<span class="rounded bg-muted px-1.5 py-0.5 text-[10px] text-muted-foreground"
 							>object</span
 						>
 					{/if}
 				</div>
-			{:else if changed}
+			{:else if changed || custom}
 				<div class="flex items-center gap-2 " >
-					<Badge variant="outline" class="text-xs">Modified</Badge>
+					{#if changed}
+						<Badge variant="outline" class="text-xs">Modified</Badge>
+					{/if}
+					{#if custom}
+						<Badge variant="secondary" class="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
+							<span class="text-orange-500 mr-1">*</span>Custom
+						</Badge>
+					{/if}
 				</div>
 			{/if}
 
 			{#if description}
 				<div class="flex items-start gap-2 text-sm text-muted-foreground">
-					<Info class="mt-0.5 h-4 w-4 flex-shrink-0" />
+					<!-- <Info class="mt-0.5 h-4 w-4 flex-shrink-0" /> -->
 					<div class="markdown-content whitespace-pre-line">
 						{@html highlightedDescriptionHTML()}
 					</div>
@@ -211,13 +235,15 @@
 				<span class="font-mono text-sm">{value ? 'true' : 'false'}</span>
 			</div>
 		{:else if fieldType() === 'object' || fieldType() === 'array'}
+			<!-- Simple JSON Input -->
 			<Textarea
 				value={stringValue}
 				oninput={handleInputChange}
-				class="min-h-[100px] max-w-md font-mono text-sm"
+				class="min-h-[120px] max-w-lg font-mono text-sm"
 				placeholder={fieldType() === 'array' ? '[]' : '{}'}
 			/>
 		{:else}
+			<!-- Simple Input for other types -->
 			<Input
 				type={fieldType() === 'number' ? 'number' : 'text'}
 				value={stringValue}
@@ -238,13 +264,21 @@
 			{/if}
 		</div>
 
-		<!-- Default Value Display (only when changed) -->
-		{#if changed}
+		<!-- Default Value Display (only when changed and no children) -->
+		{#if changed && !hasChildren()}
 			<div class="text-xs text-muted-foreground">
 				<span class="font-medium">Default:</span>
-				<code class="ml-1 rounded bg-muted px-1">
-					{typeof defaultValue === 'object' ? JSON.stringify(defaultValue) : String(defaultValue)}
-				</code>
+				{#if typeof defaultValue === 'object' && defaultValue !== null}
+					<!-- Multi-line display for objects -->
+					<pre class="mt-1 p-2 bg-muted/50 rounded text-xs font-mono whitespace-pre-wrap overflow-auto max-h-32 max-w-lg">
+{JSON.stringify(defaultValue, null, 2)}
+					</pre>
+				{:else}
+					<!-- Inline display for primitives -->
+					<code class="ml-1 rounded bg-muted px-1">
+						{defaultValue === undefined ? 'undefined' : String(defaultValue)}
+					</code>
+				{/if}
 			</div>
 		{/if}
 	</div>

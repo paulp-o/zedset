@@ -138,28 +138,76 @@
 		};
 	});
 
-	// Get visible paths based on active group and filters
+	// Filter paths to only include atomic ones (no children)
+	function getAtomicPathsOnly(paths: string[]): string[] {
+		return paths.filter(path => {
+			// Only include paths that don't have children
+			return !settingsStore.hasChildrenSet.has(path);
+		});
+	}
+
+	// Debounced search query for performance
+	let debouncedSearchQuery = $state('');
+	let searchDebounceTimer: number | NodeJS.Timeout = 0;
+
+	// Watch for search query changes and debounce them
+	$effect(() => {
+		const query = uiStore.searchQuery;
+		clearTimeout(searchDebounceTimer);
+
+		if (query.length < 3) {
+			debouncedSearchQuery = query;
+		} else {
+			searchDebounceTimer = setTimeout(() => {
+				debouncedSearchQuery = query;
+			}, 150); // 150ms debounce
+		}
+	});
+
+	// Use cached atomic paths from settings store for performance
+	let allPathsCache = $derived(() => {
+		return settingsStore.allAtomicPaths;
+	});
+
+	// Get visible paths based on active group and filters - optimized version
 	let visiblePaths = $derived(() => {
 		try {
-			const allPaths = getAllPaths(settingsStore.defaults);
-			let filtered = allPaths;
+			const allPaths = allPathsCache();
 
-			// Filter by active group
-			if (uiStore.activeGroup) {
-				filtered = filtered.filter((path) => path.startsWith(uiStore.activeGroup + '.'));
-			}
+			// Early exit if no paths
+			if (allPaths.length === 0) return [];
 
-			// Filter by changed-only
+			// If showing changed only, start with changed paths as the base (much smaller set)
+			let filtered: string[];
 			if (uiStore.showChangedOnly) {
-				filtered = filtered.filter((path) => settingsStore.changedPaths.has(path));
+				// Convert Set to Array once and filter from there - much more efficient
+				filtered = Array.from(settingsStore.changedPaths);
+
+				// Only show atomic paths (no children) - respects the atomic-only rule
+				filtered = getAtomicPathsOnly(filtered);
+
+				// Apply group filter to the smaller changed paths set
+				if (uiStore.activeGroup) {
+					const groupPrefix = uiStore.activeGroup + '.';
+					filtered = filtered.filter((path) => path.startsWith(groupPrefix));
+				}
+			} else {
+				// Standard filtering when not showing changed only
+				filtered = allPaths;
+
+				// Filter by active group
+				if (uiStore.activeGroup) {
+					const groupPrefix = uiStore.activeGroup + '.';
+					filtered = filtered.filter((path) => path.startsWith(groupPrefix));
+				}
 			}
 
-			// Filter by search (only if query is 2+ characters)
-			if (uiStore.searchQuery && uiStore.searchQuery.length >= 2) {
+			// Filter by search (only if query is 3+ characters) - use debounced query
+			if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
 				const searchResults = uiStore.searchFields(
 					filtered,
 					settingsStore.docsMap,
-					uiStore.searchQuery
+					debouncedSearchQuery
 				);
 				filtered = filtered.filter((path) => searchResults.has(path));
 			}
@@ -171,29 +219,33 @@
 		}
 	});
 
-	// Calculate changed paths that would be visible (respects current filters except show-changed-only)
+	// Calculate changed paths that would be visible - independent of showChangedOnly filter
 	let visibleChangedCount = $derived(() => {
 		try {
-			const allPaths = getAllPaths(settingsStore.defaults);
+			const allPaths = allPathsCache();
+			const changedPathsSet = settingsStore.changedPaths;
+
+			// Start with all paths, then apply filters (except showChangedOnly)
 			let filtered = allPaths;
 
-			// Apply same filters as visiblePaths except show-changed-only
+			// Filter by active group
 			if (uiStore.activeGroup) {
-				filtered = filtered.filter((path) => path.startsWith(uiStore.activeGroup + '.'));
+				const groupPrefix = uiStore.activeGroup + '.';
+				filtered = filtered.filter((path) => path.startsWith(groupPrefix));
 			}
 
-			// Filter by search (only if query is 2+ characters)
-			if (uiStore.searchQuery && uiStore.searchQuery.length >= 2) {
+			// Filter by search (only if query is 3+ characters) - use debounced query
+			if (debouncedSearchQuery && debouncedSearchQuery.length >= 3) {
 				const searchResults = uiStore.searchFields(
 					filtered,
 					settingsStore.docsMap,
-					uiStore.searchQuery
+					debouncedSearchQuery
 				);
 				filtered = filtered.filter((path) => searchResults.has(path));
 			}
 
 			// Count how many of the filtered paths are actually changed
-			return filtered.filter((path) => settingsStore.changedPaths.has(path)).length;
+			return filtered.filter((path) => changedPathsSet.has(path)).length;
 		} catch (error) {
 			console.error('Error in visibleChangedCount derivation:', error);
 			return 0;
@@ -266,6 +318,10 @@
 
 	function isFieldChanged(path: string): boolean {
 		return settingsStore.changedPaths.has(path);
+	}
+
+	function isFieldCustom(path: string): boolean {
+		return settingsStore.customPaths.has(path);
 	}
 
 	// Track highlighted elements for the pulse effect
@@ -359,6 +415,7 @@
 	{#if currentView() !== 'about'}
 		<TreeNavigation
 			groups={groupedPaths()}
+			customPaths={settingsStore.customPaths}
 			onSectionClick={handleSectionClick}
 			onHighlight={handleHighlight}
 			onAboutClick={handleAboutClick}
@@ -403,7 +460,7 @@
 							placeholder="Search settings... (Ctrl+K)"
 							value={uiStore.searchQuery}
 							oninput={handleSearchInput}
-							class="w-80 pr-9 pl-9 {uiStore.searchQuery && uiStore.searchQuery.length === 1
+							class="w-80 pr-9 pl-9 {uiStore.searchQuery && uiStore.searchQuery.length <= 2
 								? 'border-amber-300 focus:border-amber-300 focus:ring-amber-200'
 								: ''}"
 						/>
@@ -418,7 +475,7 @@
 						{/if}
 
 						<!-- Search requirement hint -->
-						{#if uiStore.searchQuery && uiStore.searchQuery.length === 1}
+						{#if uiStore.searchQuery && uiStore.searchQuery.length <= 2}
 							<div class="absolute top-full left-0 mt-1 w-full">
 								<div
 									class="rounded-md border border-amber-200 bg-amber-50 px-3 py-2 text-sm dark:border-amber-800 dark:bg-amber-950/50"
@@ -426,7 +483,7 @@
 									<div class="flex items-center space-x-2">
 										<div class="h-1.5 w-1.5 rounded-full bg-amber-500"></div>
 										<span class="text-amber-700 dark:text-amber-300">
-											Type at least 2 characters to search
+											Type at least 3 characters to search
 										</span>
 									</div>
 								</div>
@@ -498,9 +555,9 @@
 			{#if currentView() === 'editor' && uiStore.searchQuery}
 				<div class="border-t bg-muted/30 px-4 py-2">
 					<div class="flex items-center justify-between">
-						{#if uiStore.searchQuery.length === 1}
+						{#if uiStore.searchQuery.length <= 2}
 							<p class="text-sm text-amber-600 dark:text-amber-400">
-								<span class="font-medium">Type 1 more character</span> to start searching...
+								<span class="font-medium">Type {3 - uiStore.searchQuery.length} more character{3 - uiStore.searchQuery.length !== 1 ? 's' : ''}</span> to start searching...
 							</p>
 						{:else}
 							<p class="text-sm text-muted-foreground">
@@ -531,7 +588,7 @@
 				{#if settingsStore.loading}
 					<div class="flex h-32 items-center justify-center">
 						<Loader2 class="mr-2 h-6 w-6 animate-spin" />
-						<span>Loading settings...</span>
+						<span>Fetching latest default settings data...</span>
 					</div>
 				{:else if settingsStore.error}
 					<Alert variant="destructive">
@@ -603,6 +660,7 @@
 												value={getFieldValue(path)}
 												defaultValue={getFieldDefault(path)}
 												changed={isFieldChanged(path)}
+												custom={isFieldCustom(path)}
 												description={getFieldDocumentation(path) || undefined}
 												validation={settingsStore.validation.fieldErrors[path]}
 												onUpdate={(value) => handleFieldUpdate(path, value)}

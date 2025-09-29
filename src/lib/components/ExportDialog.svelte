@@ -11,7 +11,12 @@
 		DialogHeader,
 		DialogTitle
 	} from '$lib/components/ui/dialog/index.js';
-	import { Download, Copy, CheckCircle, AlertCircle, FileText, Link, Share } from 'lucide-svelte';
+	import {
+		Collapsible,
+		CollapsibleContent,
+		CollapsibleTrigger
+	} from '$lib/components/ui/collapsible/index.js';
+	import { Download, Copy, CheckCircle, AlertCircle, FileText, Link, Share, ChevronDown } from 'lucide-svelte';
 	import { downloadFile } from '$lib/core/file-operations.js';
 	import {
 		generateShareUrl,
@@ -40,6 +45,9 @@
 	let copied = $state(false);
 	let shareUrl = $state<string>('');
 	let urlCopied = $state(false);
+
+	// Collapsible state
+	let showExportErrors = $state(false);
 
 	// Export on dialog open
 	$effect(() => {
@@ -356,17 +364,27 @@
 					</div>
 				{:else}
 					<!-- Error State -->
-					<Alert variant="destructive">
-						<AlertCircle class="h-4 w-4" />
-						<AlertDescription>
-							<div class="font-medium">Export Failed</div>
-							<ul class="mt-1 list-inside list-disc">
-								{#each exportResult.errors as error}
-									<li class="text-sm">{error}</li>
-								{/each}
-							</ul>
-						</AlertDescription>
-					</Alert>
+					<Collapsible bind:open={showExportErrors}>
+						<Alert variant="destructive">
+							<AlertCircle class="h-4 w-4" />
+							<AlertDescription>
+								<div class="flex items-center justify-between">
+									<div class="font-medium">Export Failed</div>
+									<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
+										<ChevronDown class="h-3 w-3 transition-transform {showExportErrors ? 'rotate-180' : ''}" />
+										{showExportErrors ? 'Hide' : 'Show'} Details
+									</CollapsibleTrigger>
+								</div>
+								<CollapsibleContent class="mt-2">
+									<ul class="list-inside list-disc">
+										{#each exportResult.errors as error}
+											<li class="text-sm">{error}</li>
+										{/each}
+									</ul>
+								</CollapsibleContent>
+							</AlertDescription>
+						</Alert>
+					</Collapsible>
 				{/if}
 			{/if}
 		</div>

@@ -168,7 +168,7 @@
 			>
 				<span class="text-base text-muted-foreground">🔒</span>
 				<span class="text-sm text-muted-foreground">
-					All settings are processed locally in your browser.
+					All actions are processed locally in your browser.
 				</span>
 			</div>
 					</div>
