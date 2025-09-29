@@ -134,7 +134,7 @@
 
 	<!-- Preconnect to external domains for performance -->
 	<link rel="preconnect" href="https://fonts.googleapis.com" />
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+	<link rel="preconnect" href="https://fonts.gstatic.com"   />
 	<link rel="preconnect" href="https://raw.githubusercontent.com" />
 
 	<script>
@@ -182,12 +182,12 @@
 				{/if}
 
 				<Button variant="outline" size="sm" onclick={handleImport} class="hidden sm:inline-flex">
-					<Upload class="mr-2 h-4 w-4" />
+					<Download class="mr-2 h-4 w-4" />
 					Import Settings
 				</Button>
 
 				<Button variant="outline" size="sm" onclick={handleExport} class="hidden sm:inline-flex">
-					<Download class="mr-2 h-4 w-4" />
+					<Upload class="mr-2 h-4 w-4" />
 					Export / Share
 				</Button>
 
