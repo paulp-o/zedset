@@ -5,6 +5,14 @@ A web-based settings editor for [Zed Editor](https://zed.dev).
 [![GitHub](https://img.shields.io/badge/GitHub-paulp--o/zedset-181717?style=flat&logo=github)](https://github.com/paulp-o/zedset)
 [![Buy Me a Coffee](https://img.shields.io/badge/Buy%20Me%20a%20Coffee-%23FFDD00?style=flat&logo=buy-me-a-coffee)](https://www.buymeacoffee.com/paulp.o)
 
+## 🚀 Quick Start
+
+### Online Usage
+
+Visit [zedset.paulp-o.dev](https://zedset.paulp-o.dev) for immediate access.
+
+Alternately, you can clone and run the app yourself.
+
 ## ✨ Features
 
 ### Core Functionality
@@ -23,14 +31,6 @@ A web-based settings editor for [Zed Editor](https://zed.dev).
 
 - **🔒 Privacy-First** - All processing happens in your browser, no data sent to servers
 - **⚡ Fast & Stateless** - No account required, no data persistence
-
-## 🚀 Quick Start
-
-### Online Usage
-
-Visit [zedset.paulp-o.dev](https://zedset.paulp-o.dev) for immediate access.
-
-Alternately, you can clone and run the app yourself.
 
 ### Self-Hosting
 
@@ -100,10 +100,6 @@ pnpm build           # Production build
 ### Live Data Sources
 
 - **Default Settings**: `https://raw.githubusercontent.com/zed-industries/zed/refs/heads/main/assets/settings/default.json`
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how to get involved:
 
 ### Development Setup
 
