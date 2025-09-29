@@ -327,7 +327,6 @@ function extractEmptyObjectComments(lines: string[], docs: DocsMap): void {
 					}
 				}
 
-
 				// If the object has no actual properties but has comments, add them to docs
 				if (!hasActualProperties && innerComments.length > 0) {
 					const existingDoc = docs[fullPath] || '';
@@ -405,7 +404,6 @@ export async function loadDefaultSettings(): Promise<JsoncParseResult> {
 		};
 	}
 }
-
 
 /**
  * Convenience function to fetch and parse live default settings from GitHub

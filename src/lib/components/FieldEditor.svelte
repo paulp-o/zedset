@@ -164,17 +164,14 @@
 		onUpdate(checked);
 	}
 
-
 	// Helper to check if this field has children (optimized with cached data)
 	let hasChildren = $derived(() => {
 		// Use pre-computed hasChildren set for O(1) lookup
 		return settingsStore.hasChildrenSet.has(path);
 	});
-
-
 </script>
 
-<div class="space-y-3 py-4  {changed ? 'bg-orange-100/80 dark:bg-orange-950/50' : ''}">
+<div class="space-y-3 py-4 {changed ? 'bg-orange-100/80 dark:bg-orange-950/50' : ''}">
 	<!-- Header -->
 	<div class="flex items-start justify-between">
 		<div class="space-y-1">
@@ -187,8 +184,11 @@
 						<Badge variant="outline" class="text-xs">Modified</Badge>
 					{/if}
 					{#if custom}
-						<Badge variant="secondary" class="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-							<span class="text-orange-500 mr-1">*</span>Custom
+						<Badge
+							variant="secondary"
+							class="bg-purple-100 text-xs text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+						>
+							<span class="mr-1 text-orange-500">*</span>Custom
 						</Badge>
 					{/if}
 					{#if isStructuredValue()}
@@ -198,13 +198,16 @@
 					{/if}
 				</div>
 			{:else if changed || custom}
-				<div class="flex items-center gap-2 " >
+				<div class="flex items-center gap-2">
 					{#if changed}
 						<Badge variant="outline" class="text-xs">Modified</Badge>
 					{/if}
 					{#if custom}
-						<Badge variant="secondary" class="text-xs bg-purple-100 text-purple-700 dark:bg-purple-900 dark:text-purple-300">
-							<span class="text-orange-500 mr-1">*</span>Custom
+						<Badge
+							variant="secondary"
+							class="bg-purple-100 text-xs text-purple-700 dark:bg-purple-900 dark:text-purple-300"
+						>
+							<span class="mr-1 text-orange-500">*</span>Custom
 						</Badge>
 					{/if}
 				</div>
@@ -270,7 +273,8 @@
 				<span class="font-medium">Default:</span>
 				{#if typeof defaultValue === 'object' && defaultValue !== null}
 					<!-- Multi-line display for objects -->
-					<pre class="mt-1 p-2 bg-muted/50 rounded text-xs font-mono whitespace-pre-wrap overflow-auto max-h-32 max-w-lg">
+					<pre
+						class="mt-1 max-h-32 max-w-lg overflow-auto rounded bg-muted/50 p-2 font-mono text-xs whitespace-pre-wrap">
 {JSON.stringify(defaultValue, null, 2)}
 					</pre>
 				{:else}

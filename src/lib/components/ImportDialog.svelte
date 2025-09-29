@@ -258,24 +258,31 @@
 			{#if importResult}
 				<div class="space-y-3">
 					{#if importResult.success}
-					
-
 						{#if showValidation()}
 							<div class="space-y-2 text-sm">
 								<div class="font-medium">Import Summary:</div>
 								<div class="text-muted-foreground">{validationResult.summary}</div>
 
 								{#if validationResult.unknownKeys.length > 0}
-									<Collapsible bind:open={showUnknownKeys} >
+									<Collapsible bind:open={showUnknownKeys}>
 										<Alert variant="destructive" class="text-yellow-500">
-											<AlertCircle class="h-4 w-4 text-yellow-500"  />
+											<AlertCircle class="h-4 w-4 text-yellow-500" />
 											<AlertDescription>
-												<div class="flex items-center justify-between w-full">
+												<div class="flex w-full items-center justify-between">
 													<div class="font-medium text-yellow-500">
-														{validationResult.unknownKeys.length} Unknown Setting{validationResult.unknownKeys.length !== 1 ? 's' : ''} Found
+														{validationResult.unknownKeys.length} Unknown Setting{validationResult
+															.unknownKeys.length !== 1
+															? 's'
+															: ''} Found
 													</div>
-													<CollapsibleTrigger class="flex text-yellow-500 items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
-														<ChevronDown class="h-3 w-3 transition-transform {showUnknownKeys ? 'rotate-180' : ''}" />
+													<CollapsibleTrigger
+														class="flex h-auto cursor-pointer items-center gap-1 rounded p-1 text-xs text-yellow-500 transition-colors hover:bg-muted"
+													>
+														<ChevronDown
+															class="h-3 w-3 transition-transform {showUnknownKeys
+																? 'rotate-180'
+																: ''}"
+														/>
 														{showUnknownKeys ? 'Hide' : 'Show'} Details
 													</CollapsibleTrigger>
 												</div>
@@ -286,7 +293,12 @@
 														{/each}
 													</ul>
 													<p class="mt-2 text-xs text-yellow-500">
-														The default values for the above imported settings were not found in the official Zed default settings data. This doesn't necessarily mean that these values are invalid; It might be custom settings you need for your extensions, or just valid data that is not yet on the default settings data. You might need to read the related docs on the Zed official docs webpage, accessible directly from the editor.
+														The default values for the above imported settings were not found in the
+														official Zed default settings data. This doesn't necessarily mean that
+														these values are invalid; It might be custom settings you need for your
+														extensions, or just valid data that is not yet on the default settings
+														data. You might need to read the related docs on the Zed official docs
+														webpage, accessible directly from the editor.
 													</p>
 												</CollapsibleContent>
 											</AlertDescription>
@@ -301,10 +313,19 @@
 											<AlertDescription>
 												<div class="flex items-center justify-between">
 													<div class="font-medium text-red-500">
-														{validationResult.errors.length} Validation Error{validationResult.errors.length !== 1 ? 's' : ''}
+														{validationResult.errors.length} Validation Error{validationResult
+															.errors.length !== 1
+															? 's'
+															: ''}
 													</div>
-													<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
-														<ChevronDown class="h-3 w-3 transition-transform {showValidationErrors ? 'rotate-180' : ''}" />
+													<CollapsibleTrigger
+														class="flex h-auto cursor-pointer items-center gap-1 rounded p-1 text-xs transition-colors hover:bg-muted"
+													>
+														<ChevronDown
+															class="h-3 w-3 transition-transform {showValidationErrors
+																? 'rotate-180'
+																: ''}"
+														/>
 														{showValidationErrors ? 'Hide' : 'Show'} Details
 													</CollapsibleTrigger>
 												</div>
@@ -328,8 +349,12 @@
 								<AlertDescription>
 									<div class="flex items-center justify-between">
 										<div class="font-medium">Import Failed</div>
-										<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
-											<ChevronDown class="h-3 w-3 transition-transform {showImportDetails ? 'rotate-180' : ''}" />
+										<CollapsibleTrigger
+											class="flex h-auto cursor-pointer items-center gap-1 rounded p-1 text-xs transition-colors hover:bg-muted"
+										>
+											<ChevronDown
+												class="h-3 w-3 transition-transform {showImportDetails ? 'rotate-180' : ''}"
+											/>
 											{showImportDetails ? 'Hide' : 'Show'} Details
 										</CollapsibleTrigger>
 									</div>
@@ -343,18 +368,21 @@
 								</AlertDescription>
 							</Alert>
 						</Collapsible>
-					{/if}	<div class="flex items-center gap-2 rounded-md border-0 border-none bg-green-50 px-3 py-2 text-green-700  dark:bg-green-950/40 dark:text-green-300 backdrop-blur-sm">
-							<CheckCircle class="h-4 w-4" />
-							<div>
-								<span class="font-medium">Settings imported successfully!</span>
-								{#if importResult.warnings.length > 0}
-									<br />
-									<span class="text-yellow-700 dark:text-yellow-300">
-										Warnings: {importResult.warnings.join(', ')}
-									</span>
-								{/if}
-							</div>
+					{/if}
+					<div
+						class="flex items-center gap-2 rounded-md border-0 border-none bg-green-50 px-3 py-2 text-green-700 backdrop-blur-sm dark:bg-green-950/40 dark:text-green-300"
+					>
+						<CheckCircle class="h-4 w-4" />
+						<div>
+							<span class="font-medium">Settings imported successfully!</span>
+							{#if importResult.warnings.length > 0}
+								<br />
+								<span class="text-yellow-700 dark:text-yellow-300">
+									Warnings: {importResult.warnings.join(', ')}
+								</span>
+							{/if}
 						</div>
+					</div>
 				</div>
 			{/if}
 		</div>

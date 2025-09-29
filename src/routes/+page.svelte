@@ -33,17 +33,16 @@
 	let showFieldResetConfirmation = $state(false);
 	let fieldToReset = $state<string>('');
 
-	// Load settings from URL hash on page load
+	// Load settings from URL query parameters on page load
 	function loadFromUrl() {
 		try {
-			const hash = window.location.hash;
-			const configMatch = hash.match(/#config=([^&]+)/);
+			const urlParams = new URLSearchParams(window.location.search);
+			const configParam = urlParams.get('config');
 
-			if (configMatch) {
+			if (configParam) {
 				isLoadingFromUrl = true;
 				hasSharedConfig = true;
-				const encoded = configMatch[1];
-				const userSettings = decodeConfig(encoded);
+				const userSettings = decodeConfig(configParam);
 				settingsStore.loadUserSettings(userSettings);
 				isLoadingFromUrl = false;
 				return true;
@@ -66,15 +65,19 @@
 			const userSettings = settingsStore.user;
 			if (Object.keys(userSettings).length === 0) {
 				// Remove config from URL if no user settings
-				if (window.location.hash.includes('#config=')) {
-					const newUrl = window.location.href.split('#')[0];
+				const urlParams = new URLSearchParams(window.location.search);
+				if (urlParams.has('config')) {
+					urlParams.delete('config');
+					const newUrl = `${window.location.origin}${window.location.pathname}${urlParams.toString() ? '?' + urlParams.toString() : ''}`;
 					window.history.replaceState({}, '', newUrl);
 					hasSharedConfig = false;
 				}
 			} else {
 				// Update URL with encoded settings
 				const encoded = encodeConfig(userSettings);
-				const newUrl = `${window.location.origin}${window.location.pathname}#config=${encoded}`;
+				const urlParams = new URLSearchParams(window.location.search);
+				urlParams.set('config', encoded);
+				const newUrl = `${window.location.origin}${window.location.pathname}?${urlParams.toString()}`;
 				window.history.replaceState({}, '', newUrl);
 				hasSharedConfig = true;
 			}
@@ -140,7 +143,7 @@
 
 	// Filter paths to only include atomic ones (no children)
 	function getAtomicPathsOnly(paths: string[]): string[] {
-		return paths.filter(path => {
+		return paths.filter((path) => {
 			// Only include paths that don't have children
 			return !settingsStore.hasChildrenSet.has(path);
 		});
@@ -339,15 +342,17 @@
 
 	// Navigation handlers
 	function handleAboutClick() {
-		// Preserve hash parameters when navigating to about
-		const currentHash = window.location.hash;
-		goto(`/?view=about${currentHash}`);
+		// Preserve query parameters when navigating to about
+		const urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('view', 'about');
+		goto(`/?${urlParams.toString()}`);
 	}
 
 	function handleSettingsClick() {
-		// Preserve hash parameters when navigating to editor
-		const currentHash = window.location.hash;
-		goto(`/?view=editor${currentHash}`);
+		// Preserve query parameters when navigating to editor
+		const urlParams = new URLSearchParams(window.location.search);
+		urlParams.set('view', 'editor');
+		goto(`/?${urlParams.toString()}`);
 	}
 
 	function handleSectionClick(sectionId: string) {
@@ -402,8 +407,8 @@
 		// Convert group name to URL format (lowercase, spaces to dashes)
 		const urlSlug = groupName
 			.toLowerCase()
-			.replace(/[_]/g, '-')  // Convert underscores to dashes
-			.replace(/\s+/g, '-')  // Convert spaces to dashes
+			.replace(/[_]/g, '-') // Convert underscores to dashes
+			.replace(/\s+/g, '-') // Convert spaces to dashes
 			.replace(/[^a-z0-9-]/g, ''); // Remove special characters
 
 		return `https://zed.dev/docs/configuring-zed#${urlSlug}`;
@@ -495,7 +500,9 @@
 
 			<!-- Secondary Controls Line (Editor Only) -->
 			{#if currentView() === 'editor'}
-				<div class="flex items-center justify-between gap-4 px-4 pb-3 border-b border-dashed bg-background/80">
+				<div
+					class="flex items-center justify-between gap-4 border-b border-dashed bg-background/80 px-4 pb-3"
+				>
 					<!-- View Controls -->
 					<div class="flex items-center space-x-6">
 						<div class="flex items-center space-x-4">
@@ -557,7 +564,13 @@
 					<div class="flex items-center justify-between">
 						{#if uiStore.searchQuery.length <= 2}
 							<p class="text-sm text-amber-600 dark:text-amber-400">
-								<span class="font-medium">Type {3 - uiStore.searchQuery.length} more character{3 - uiStore.searchQuery.length !== 1 ? 's' : ''}</span> to start searching...
+								<span class="font-medium"
+									>Type {3 - uiStore.searchQuery.length} more character{3 -
+										uiStore.searchQuery.length !==
+									1
+										? 's'
+										: ''}</span
+								> to start searching...
 							</p>
 						{:else}
 							<p class="text-sm text-muted-foreground">
@@ -650,9 +663,9 @@
 									{#each paths as path, index (path)}
 										<div
 											id="field-{path}"
-											class="rounded-xl duration-700 transition-all p-1 ease-out {highlightedElement ===
+											class="rounded-xl p-1 transition-all duration-700 ease-out {highlightedElement ===
 											`field-${path}`
-												? ' bg-primary/0 ring-ring/50 ring-3 rounded-2xl'
+												? ' rounded-2xl bg-primary/0 ring-3 ring-ring/50'
 												: 'ring-transparent'}"
 										>
 											<FieldEditor

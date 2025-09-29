@@ -259,8 +259,8 @@
 	}
 
 	/* Number input spinner controls - Light theme */
-	input[type="number"]::-webkit-outer-spin-button,
-	input[type="number"]::-webkit-inner-spin-button {
+	input[type='number']::-webkit-outer-spin-button,
+	input[type='number']::-webkit-inner-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
 		background: oklch(0.13 0.015 250);
@@ -271,21 +271,21 @@
 		cursor: pointer;
 	}
 
-	input[type="number"]::-webkit-outer-spin-button:hover,
-	input[type="number"]::-webkit-inner-spin-button:hover {
+	input[type='number']::-webkit-outer-spin-button:hover,
+	input[type='number']::-webkit-inner-spin-button:hover {
 		background: oklch(0.25 0.02 250);
 	}
 
 	/* Number input spinner controls - Dark theme */
-	.dark input[type="number"]::-webkit-outer-spin-button,
-	.dark input[type="number"]::-webkit-inner-spin-button {
+	.dark input[type='number']::-webkit-outer-spin-button,
+	.dark input[type='number']::-webkit-inner-spin-button {
 		background: oklch(0.25 0.02 250);
 		color: oklch(0.92 0.01 250);
 		border-color: oklch(0.48 0.03 250);
 	}
 
-	.dark input[type="number"]::-webkit-outer-spin-button:hover,
-	.dark input[type="number"]::-webkit-inner-spin-button:hover {
+	.dark input[type='number']::-webkit-outer-spin-button:hover,
+	.dark input[type='number']::-webkit-inner-spin-button:hover {
 		background: oklch(0.35 0.03 250);
 	}
 }

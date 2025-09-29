@@ -39,7 +39,7 @@ export function decodeConfig(encoded: string): SettingsObject {
 }
 
 /**
- * Generates a shareable URL with settings encoded in the hash
+ * Generates a shareable URL with settings encoded as query parameters
  * @param settings - The settings object to share
  * @param baseUrl - Optional base URL (defaults to current location)
  * @returns Complete shareable URL
@@ -47,33 +47,32 @@ export function decodeConfig(encoded: string): SettingsObject {
 export function generateShareUrl(settings: SettingsObject, baseUrl?: string): string {
 	const encoded = encodeConfig(settings);
 	const base = baseUrl || `${window.location.origin}${window.location.pathname}`;
-	return `${base}#config=${encoded}`;
+	return `${base}?config=${encoded}`;
 }
 
 /**
  * Parses a share URL to extract settings
- * @param url - The URL to parse (can be full URL or just hash)
+ * @param url - The URL to parse (can be full URL or just query string)
  * @returns Settings object if found, null otherwise
  */
 export function parseShareUrl(url: string): SettingsObject | null {
 	try {
-		let hash: string;
+		let queryString: string;
 
-		if (url.startsWith('#')) {
-			hash = url;
-		} else if (url.includes('#')) {
-			hash = url.split('#')[1];
+		if (url.startsWith('?')) {
+			queryString = url;
+		} else if (url.includes('?')) {
+			queryString = url.split('?')[1];
+			// Remove any hash fragment if present
+			if (queryString.includes('#')) {
+				queryString = queryString.split('#')[0];
+			}
 		} else {
 			return null;
 		}
 
-		// Remove leading # if present
-		if (hash.startsWith('#')) {
-			hash = hash.slice(1);
-		}
-
 		// Look for config parameter
-		const params = new URLSearchParams(hash);
+		const params = new URLSearchParams(queryString);
 		const configParam = params.get('config');
 
 		if (!configParam) {

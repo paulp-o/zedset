@@ -335,9 +335,9 @@
 		variant="secondary"
 		size="sm"
 		onclick={scrollSidebarToTop}
-		class="shadow-medium absolute top-2 right-2 z-10 transition-opacity duration-300 bg-background/60 backdrop-blur-md border-2 border-border/30 {showGoTop
-			? 'opacity-100 text-primary'
-			: 'pointer-events-none opacity-0 text-primary'}"
+		class="shadow-medium absolute top-2 right-2 z-10 border-2 border-border/30 bg-background/60 backdrop-blur-md transition-opacity duration-300 {showGoTop
+			? 'text-primary opacity-100'
+			: 'pointer-events-none text-primary opacity-0'}"
 	>
 		<span class="mr-1 text-xs text-primary">Scroll To Top</span>
 		<ChevronUp class="h-4 w-4 text-primary" />

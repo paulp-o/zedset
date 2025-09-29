@@ -16,7 +16,16 @@
 		CollapsibleContent,
 		CollapsibleTrigger
 	} from '$lib/components/ui/collapsible/index.js';
-	import { Download, Copy, CheckCircle, AlertCircle, FileText, Link, Share, ChevronDown } from 'lucide-svelte';
+	import {
+		Download,
+		Copy,
+		CheckCircle,
+		AlertCircle,
+		FileText,
+		Link,
+		Share,
+		ChevronDown
+	} from 'lucide-svelte';
 	import { downloadFile } from '$lib/core/file-operations.js';
 	import {
 		generateShareUrl,
@@ -345,9 +354,7 @@
 									</div>
 								{:else}
 									<div class="py-4 text-center">
-										<p class="text-sm text-muted-foreground">
-											No changes to share
-										</p>
+										<p class="text-sm text-muted-foreground">No changes to share</p>
 									</div>
 								{/if}
 
@@ -370,8 +377,12 @@
 							<AlertDescription>
 								<div class="flex items-center justify-between">
 									<div class="font-medium">Export Failed</div>
-									<CollapsibleTrigger class="flex items-center gap-1 h-auto p-1 text-xs hover:bg-muted rounded transition-colors cursor-pointer">
-										<ChevronDown class="h-3 w-3 transition-transform {showExportErrors ? 'rotate-180' : ''}" />
+									<CollapsibleTrigger
+										class="flex h-auto cursor-pointer items-center gap-1 rounded p-1 text-xs transition-colors hover:bg-muted"
+									>
+										<ChevronDown
+											class="h-3 w-3 transition-transform {showExportErrors ? 'rotate-180' : ''}"
+										/>
 										{showExportErrors ? 'Hide' : 'Show'} Details
 									</CollapsibleTrigger>
 								</div>

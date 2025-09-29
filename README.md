@@ -96,7 +96,6 @@ pnpm test            # Run all tests
 pnpm build           # Production build
 ```
 
-
 ### Live Data Sources
 
 - **Default Settings**: `https://raw.githubusercontent.com/zed-industries/zed/refs/heads/main/assets/settings/default.json`

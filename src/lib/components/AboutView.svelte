@@ -133,8 +133,8 @@
 					<p class="ml-11 text-sm leading-relaxed text-muted-foreground">
 						Find any setting instantly by name or description with real-time filtering.
 					</p>
-					</div>
-					
+				</div>
+
 				<div class="group space-y-3">
 					<div class="flex items-center gap-3">
 						<div class="flex h-8 w-8 items-center justify-center rounded-full bg-cyan-500/10">
@@ -145,8 +145,8 @@
 					<p class="ml-11 text-sm leading-relaxed text-muted-foreground">
 						Generate clean settings.json files containing only your changes from defaults.
 					</p>
-					</div>
-					
+				</div>
+
 				<div class="group space-y-3">
 					<div class="flex items-center gap-3">
 						<div class="flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500/10">
@@ -171,8 +171,8 @@
 					All actions are processed locally in your browser.
 				</span>
 			</div>
-					</div>
-					
+		</div>
+
 		<!-- Usage Steps -->
 		<div class="mb-16">
 			<h2 class="mb-12 text-center text-3xl font-light text-foreground">How to use ZedSet</h2>

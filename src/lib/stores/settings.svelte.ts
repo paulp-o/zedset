@@ -54,7 +54,6 @@ class SettingsStore {
 		return { effective, delta, validation, changedPaths, customPaths };
 	});
 
-
 	// Getters for reactive access
 	get defaults() {
 		return this.state.defaults;
@@ -317,7 +316,6 @@ class SettingsStore {
 		return changedPaths;
 	}
 
-
 	private _getValueByPath(obj: SettingsObject, path: string): unknown {
 		return path
 			.split('.')
@@ -356,7 +354,6 @@ class SettingsStore {
 			changedPaths.add(currentPath);
 		}
 	}
-
 
 	private _deepEqual(a: unknown, b: unknown): boolean {
 		// Fast path: reference equality
